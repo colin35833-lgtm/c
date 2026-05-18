@@ -1,6 +1,4 @@
-<!DOC
-  
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -16,7 +14,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.06)}
 .card-title{font-size:15px;font-weight:600;margin-bottom:14px;color:#1d1d1f;display:flex;align-items:center;gap:8px}
 .card-title .icon{width:20px;height:20px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0}
-.income-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.income-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
 .income-item{background:#fafafa;border-radius:10px;padding:16px;border:1px solid rgba(0,0,0,.04)}
 .income-label{font-size:12px;color:#86868b;margin-bottom:6px}
 .income-value{font-size:26px;font-weight:600;display:flex;align-items:center;gap:8px}
@@ -113,7 +111,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .lock-box button{width:100%;padding:10px;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s}
 .lock-box .lock-btn{background:#0066cc;color:#fff}
 .lock-box .lock-btn:hover{background:#0055b3}
-.lock-box .lock-hint{font-size:11px;color:#c7c7cc;margin-top:12px;cursor:pointer}
+.lock-box .lock-hint{font-size:11px;color:#c7c7cc;margin-top:12px;cursor:pointer;background:transparent;border:none;padding:0;text-decoration:underline}
 .lock-box .lock-hint:hover{color:#0066cc}
 .lock-setup{background:#fff;border-radius:16px;padding:32px 36px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.06);text-align:center;max-width:340px;width:100%}
 .lock-setup h2{font-size:18px;font-weight:600;margin-bottom:4px;color:#1d1d1f}
@@ -128,8 +126,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#d2d2d7;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:#c7c7cc}
-}}</style>
-<style>
 .mm-parent[draggable="true"],.task-list li[draggable="true"]{cursor:pointer}
 .dragging{opacity:.5;outline:2px dashed #0066cc}
 .drag-over{position:relative}
@@ -143,8 +139,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     <p>输入密码解锁</p>
     <input type="password" id="lockPwdInput" placeholder="密码" maxlength="20" autofocus>
     <div class="lock-error" id="lockError"></div>
-    <button class="lock-btn" onclick="unlock()">解锁</button>
-    <a class="lock-hint" onclick="showSetup()">设置新密码</a>
+    <button type="button" class="lock-btn" onclick="unlock()">解锁</button>
+    <button type="button" class="lock-hint" onclick="showSetup()">设置新密码</button>
   </div>
   <div class="lock-setup" id="lockSetup" style="display:none">
     <h2>设置密码</h2>
@@ -153,8 +149,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     <input type="password" id="setupPwdInput" placeholder="新密码" maxlength="20" autofocus>
     <input type="password" id="setupPwdConfirm" placeholder="再次输入新密码" maxlength="20">
     <div class="lock-error" id="setupError"></div>
-    <button class="lock-btn" onclick="setupPassword()">确认</button>
-    <a class="lock-hint" id="setupBack" onclick="backToLock()" style="display:none;margin-top:10px">返回</a>
+    <button type="button" class="lock-btn" onclick="setupPassword()">确认</button>
+    <button type="button" class="lock-hint" id="setupBack" onclick="backToLock()" style="display:none;margin-top:10px">返回</button>
   </div>
 </div>
 <div class="container">
@@ -165,7 +161,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
   <div class="card" style="margin-bottom:16px">
     <div class="card-title"><span class="icon" style="background:#0066cc">¥</span>营收 · 利润</div>
     <div style="font-size:12px;color:#86868b;margin-bottom:12px"><span id="dateDisplay"></span></div>
-    <div class="income-grid" style="grid-template-columns:1fr 1fr 1fr 1fr">
+    <div class="income-grid">
       <div class="income-item">
         <div class="income-label">总营收</div>
         <div class="income-value"><span class="symbol">¥</span><span id="totalIncome">0.00</span></div>
@@ -213,7 +209,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
         <div class="card-title"><span class="icon" style="background:#e68a00">★</span>主线任务</div>
         <div class="task-input-row">
           <input type="text" id="mainTaskInput" placeholder="输入新任务，回车添加...">
-          <button onclick="amt()">添加</button>
+          <button type="button" onclick="amt()">添加</button>
         </div>
         <ul class="task-list" id="mainTaskList"></ul>
       </div>
@@ -221,7 +217,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
         <div class="card-title"><span class="icon" style="background:#34c759"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 2L2 12l10 10 10-10L12 2z"/></svg></span>可选任务</div>
         <div class="task-input-row">
           <input type="text" id="devTaskInput" placeholder="输入新任务，回车添加...">
-          <button onclick="adt()">添加</button>
+          <button type="button" onclick="adt()">添加</button>
         </div>
         <ul class="task-list" id="devTaskList"></ul>
       </div>
@@ -232,7 +228,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     <div class="link-input-row">
       <input type="text" class="link-name-input" id="linkNameInput" placeholder="名称（如 淘宝后台）">
       <input type="text" class="link-url-input" id="linkUrlInput" placeholder="网址链接">
-      <button onclick="al()">添加</button>
+      <button type="button" onclick="al()">添加</button>
     </div>
     <ul class="link-list" id="linkList">
       <li class="link-empty" id="linkEmpty">添加一些常用网址吧</li>
@@ -257,8 +253,11 @@ function gtk(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1
     if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(row.data));hasData=true;}}});}
     if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
     sessionStorage.setItem('zhuye2_synced','1');
-    if((!localStorage.getItem(PK)||sessionStorage.getItem(UK))){location.reload();}
-  }).catch(function(){sessionStorage.setItem('zhuye2_synced','1');});
+    if(!localStorage.getItem(PK)){location.reload();}
+  }).catch(function(){
+    sessionStorage.setItem('zhuye2_synced','1');
+    runDailyReset();runMainTaskArchive();runDevTaskArchive();
+  });
 })();
 
 function enableDragSort(listEl,getData,setData,renderFn,itemSelector){
@@ -354,14 +353,12 @@ function toggleIncHist(){
 
 // ===================== 主线任务（次日自动归档） =====================
 function runMainTaskArchive(){var ld_=ld('mtDate',''),td_=gtk();if(ld_!==td_){var ts_=ld('mainTasks',[]),done_=[];for(var i_=ts_.length-1;i_>=0;i_--){if(ts_[i_].done){done_.push(ts_[i_]);ts_.splice(i_,1);}}if(done_.length&&ld_){var h_=ld('taskHistory',{});if(!h_[ld_])h_[ld_]=[];done_.forEach(function(t){h_[ld_].push({text:t.text,time:'归档'});});sd('taskHistory',h_);}sd('mainTasks',ts_);sd('mtDate',td_);}}
-if(localStorage.getItem('zhuye2_mainTasks')){runMainTaskArchive();}
 function rmt(){var l=document.getElementById('mainTaskList'),t=ld('mainTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('mainTasks',t);rmt();};li.appendChild(ic);li.appendChild(sp);li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('mainTasks',[]);},function(d){sd('mainTasks',d);},rmt);}
 function amt(){var i=document.getElementById('mainTaskInput'),t=i.value.trim();if(!t)return;var ts=ld('mainTasks',[]);ts.push({text:t,done:false});sd('mainTasks',ts);rmt();i.value='';i.focus();}
 document.getElementById('mainTaskInput').addEventListener('keydown',function(e){if(e.key==='Enter')amt();});rmt();
 
 // ===================== 可选任务（次日自动归档） =====================
 function runDevTaskArchive(){var dd_=ld('devDate',''),td_=gtk();if(dd_!==td_){var ds_=ld('devTasks',[]),done_=[];for(var di_=ds_.length-1;di_>=0;di_--){if(ds_[di_].done){done_.push(ds_[di_]);ds_.splice(di_,1);}}if(done_.length&&dd_){var dh_=ld('devTaskHistory',{});if(!dh_[dd_])dh_[dd_]=[];done_.forEach(function(t){dh_[dd_].push({text:t.text,time:'归档'});});sd('devTaskHistory',dh_);}sd('devTasks',ds_);sd('devDate',td_);}}
-if(localStorage.getItem('zhuye2_devTasks')){runDevTaskArchive();}
 function rdt(){var l=document.getElementById('devTaskList'),t=ld('devTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('devTasks',t);rdt();};li.appendChild(ic);li.appendChild(sp);li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('devTasks',[]);},function(d){sd('devTasks',d);},rdt);}
 function adt(){var i=document.getElementById('devTaskInput'),t=i.value.trim();if(!t)return;var ts=ld('devTasks',[]);ts.push({text:t,done:false});sd('devTasks',ts);rdt();i.value='';i.focus();}
 document.getElementById('devTaskInput').addEventListener('keydown',function(e){if(e.key==='Enter')adt();});rdt();
@@ -394,7 +391,6 @@ function runDailyReset(){
   }
 }
 var mmLastDate=ld('mmDate','');var mmToday=gtk();
-if(mmLastDate!==mmToday&&localStorage.getItem('zhuye2_mindmap')){runDailyReset();}
 
 var mmData=ld('mindmap',{children:[{label:'电商',done:false,children:[{label:'上新',done:false},{label:'客服',done:false},{label:'发货',done:false}]},{label:'自媒体',done:false,children:[{label:'写文案',done:false},{label:'拍摄',done:false},{label:'发布',done:false}]},{label:'个人',done:false,children:[{label:'学习',done:false},{label:'复盘',done:false}]}]});
 var mmOpen={};
