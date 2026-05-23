@@ -453,6 +453,16 @@ function runDailyReset(){
 runDailyReset();
 
 var mmData=ld('mindmap',{children:[{label:'电商',done:false,income:0,profit:0,children:[{label:'多多',done:false,income:0,profit:0},{label:'抖店',done:false,income:0,profit:0},{label:'淘宝',done:false,income:0,profit:0}]},{label:'自媒体',done:false,income:0,profit:0,children:[{label:'小红书',done:false,income:0,profit:0},{label:'抖音',done:false,income:0,profit:0},{label:'B站',done:false,income:0,profit:0}]},{label:'个人',done:false,income:0,profit:0,children:[{label:'学习',done:false,income:0,profit:0},{label:'复盘',done:false,income:0,profit:0}]}]});
+
+// 清理测试数据：只保留今天的归档记录
+(function cleanTestData(){
+  var hist=ld('mmIncomeHistory',{});
+  var today=gtk();
+  var keys=Object.keys(hist);
+  var changed=false;
+  keys.forEach(function(k){if(k!==today){delete hist[k];changed=true;}});
+  if(changed)sd('mmIncomeHistory',hist);
+})();
 var mmOpen={};
 function mmSave(){sd('mindmap',mmData);}
 function mmMakeLabel(node,li,icon){
