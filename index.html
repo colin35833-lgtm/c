@@ -340,8 +340,8 @@ function calcDailyIncome(){
   return {income:totalInc,profit:totalPrf};
 }
 
-function ct(){var i=ld('incomes',{}),t=0;for(var k in i)t+=parseFloat(i[k])||0;document.getElementById('totalIncome').textContent=t.toFixed(2);}
-function pct(){var i=ld('profits',{}),t=0;for(var k in i)t+=parseFloat(i[k])||0;document.getElementById('totalProfit').textContent=t.toFixed(2);}
+function ct(){var t=parseFloat(ld('totalIncomeAccumulated',0))||0;document.getElementById('totalIncome').textContent=t.toFixed(2);}
+function pct(){var t=parseFloat(ld('totalProfitAccumulated',0))||0;document.getElementById('totalProfit').textContent=t.toFixed(2);}
 ct();pct();
 
 // ===================== 收支明细 =====================
@@ -434,6 +434,15 @@ function runDailyReset(){
         }
       }
     }
+    // 累加到总营收/总利润
+    var dayTotal=calcDailyIncome();
+    if(dayTotal.income||dayTotal.profit){
+      var accInc=parseFloat(ld('totalIncomeAccumulated',0))||0;
+      var accPrf=parseFloat(ld('totalProfitAccumulated',0))||0;
+      sd('totalIncomeAccumulated',accInc+dayTotal.income);
+      sd('totalProfitAccumulated',accPrf+dayTotal.profit);
+      ct();pct();
+    }
     // 重置状态
     var mmData=ld('mindmap',null);
     if(mmData&&mmData.children&&mmData.children.length){
@@ -454,10 +463,6 @@ runDailyReset();
 
 var mmData=ld('mindmap',{children:[{label:'电商',done:false,income:0,profit:0,children:[{label:'多多',done:false,income:0,profit:0},{label:'抖店',done:false,income:0,profit:0},{label:'淘宝',done:false,income:0,profit:0}]},{label:'自媒体',done:false,income:0,profit:0,children:[{label:'小红书',done:false,income:0,profit:0},{label:'抖音',done:false,income:0,profit:0},{label:'B站',done:false,income:0,profit:0}]},{label:'个人',done:false,income:0,profit:0,children:[{label:'学习',done:false,income:0,profit:0},{label:'复盘',done:false,income:0,profit:0}]}]});
 
-// 清理测试数据
-(function cleanTestData(){
-  sd('mmIncomeHistory',{});
-})();
 var mmOpen={};
 function mmSave(){sd('mindmap',mmData);}
 function mmMakeLabel(node,li,icon){
@@ -553,7 +558,7 @@ document.getElementById('linkNameInput').addEventListener('keydown',function(e){
 rl();
 
 // ===================== 手动同步按钮 =====================
-function syncAll(){var ks=['incomes','mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','profits','mmIncomeHistory'];ks.forEach(function(k){var d=ld(k,null);if(d!==null){sd(k,d);}});document.getElementById('syncBtn').textContent='☁️';setTimeout(function(){document.getElementById('syncBtn').textContent='☁';},2000);}
+function syncAll(){var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];ks.forEach(function(k){var d=ld(k,null);if(d!==null){sd(k,d);}});document.getElementById('syncBtn').textContent='☁️';setTimeout(function(){document.getElementById('syncBtn').textContent='☁';},2000);}
 </script>
 </body>
 </html>
