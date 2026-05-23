@@ -512,12 +512,16 @@ function mmRender(){
 
         // 收入输入
         var incInp=document.createElement('input');incInp.className='mm-income-input';incInp.placeholder='¥';incInp.value=(c.income?c.income:'');
-        incInp.oninput=function(){clearTimeout(c._incT);c._incT=setTimeout(function(){var v=parseFloat(incInp.value)||0;c.income=v;if(v>0||parseFloat(c.profit||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();},300);};
+        incInp.oninput=function(){clearTimeout(c._incT);c._incT=setTimeout(function(){var v=parseFloat(incInp.value)||0;c.income=v;if(v>0||parseFloat(c.profit||0)>0){c.done=true;}mmSave();calcDailyIncome();},300);};
+        incInp.onblur=function(){var v=parseFloat(incInp.value)||0;c.income=v;if(v>0||parseFloat(c.profit||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();};
+        incInp.onkeydown=function(e){if(e.key==='Enter')incInp.blur();};
         cli.appendChild(incInp);
 
         // 利润输入
         var prfInp=document.createElement('input');prfInp.className='mm-profit-input';prfInp.placeholder='◆';prfInp.value=(c.profit?c.profit:'');
-        prfInp.oninput=function(){clearTimeout(c._prfT);c._prfT=setTimeout(function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();},300);};
+        prfInp.oninput=function(){clearTimeout(c._prfT);c._prfT=setTimeout(function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();calcDailyIncome();},300);};
+        prfInp.onblur=function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();};
+        prfInp.onkeydown=function(e){if(e.key==='Enter')prfInp.blur();};
         cli.appendChild(prfInp);
 
         var cd=document.createElement('button');cd.className='mm-del';cd.textContent='✕';cd.onclick=function(){p.children.splice(j,1);mmSave();mmRender();calcDailyIncome();};
