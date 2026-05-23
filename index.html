@@ -19,9 +19,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .income-label{font-size:12px;color:#86868b;margin-bottom:6px}
 .income-value{font-size:26px;font-weight:600;display:flex;align-items:center;gap:8px}
 .income-value .symbol{font-size:18px;color:#86868b;font-weight:400}
-.income-input{width:100%;border:none;background:transparent;font-size:26px;font-weight:600;color:#1d1d1f;outline:none;border-bottom:2px solid transparent;transition:border-color .2s;padding:2px 0}
-.income-input:focus{border-color:#0066cc}
-.income-input::placeholder{color:#c7c7cc;font-weight:400}
+.income-static{font-size:26px;font-weight:600;color:#1d1d1f}
 .task-row{display:grid;grid-template-columns:750px 1fr;gap:16px;margin-bottom:16px}
 .task-col{display:flex;flex-direction:column;gap:16px}
 .task-input-row{display:flex;gap:8px;margin-bottom:10px}
@@ -66,7 +64,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .link-list li .link-del:hover{color:#a32d2d;background:#fcebeb}
 .link-empty{display:flex;align-items:center;justify-content:center;flex:1;color:#c7c7cc;font-size:13px;min-height:120px}
 
-/* 日常任务 - 层级列表 */
 .mm-toolbar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 .mm-toolbar button{padding:5px 12px;border:1px solid #d2d2d7;border-radius:7px;font-size:12px;cursor:pointer;background:#fff;color:#1d1d1f;transition:all .15s}
 .mm-toolbar button:hover{background:#f5f5f7;border-color:#c7c7cc}
@@ -88,17 +85,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .mm-list .mm-parent:hover .mm-del{opacity:1}
 .mm-list .mm-parent .mm-del:hover{color:#a32d2d;background:#fcebeb}
 .mm-list .mm-child{padding-left:38px}
-.mm-list .mm-child li{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;margin-bottom:2px;font-size:13px;transition:all .15s;background:#fafafa}
+.mm-list .mm-child li{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;margin-bottom:2px;font-size:12px;transition:all .15s;background:#fafafa}
 .mm-list .mm-child li:hover{background:#f0f0f2}
-.mm-list .mm-child li .mm-icon{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;border:1.5px solid #c7c7cc;cursor:pointer;transition:all .2s;background:transparent;color:transparent}
+.mm-list .mm-child li .mm-icon{width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;flex-shrink:0;border:1.5px solid #c7c7cc;cursor:pointer;transition:all .2s;background:transparent;color:transparent}
 .mm-list .mm-child li.done .mm-icon{background:#34c759;border-color:#34c759;color:#fff}
 .mm-list .mm-child li .mm-label{flex:1;cursor:pointer;padding:2px 0;color:#1d1d1f}
 .mm-list .mm-child li.done .mm-label{text-decoration:line-through;text-decoration-thickness:2.5px;color:#3b6d11}
-.mm-list .mm-child li .mm-del{width:18px;height:18px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;border-radius:4px;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
+.mm-list .mm-child li .mm-del{width:16px;height:16px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;border-radius:4px;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
 .mm-list .mm-child li:hover .mm-del{opacity:1}
 .mm-list .mm-child li .mm-del:hover{color:#a32d2d;background:#fcebeb}
 .mm-child.collapsed{display:none}
 .mm-empty{display:flex;align-items:center;justify-content:center;color:#c7c7cc;font-size:13px;min-height:100px}
+
+.mm-income-input,.mm-profit-input{width:55px;padding:3px 5px;border:1px solid #d2d2d7;border-radius:5px;font-size:11px;outline:none;text-align:right;transition:border-color .2s;background:#fff}
+.mm-income-input:focus,.mm-profit-input:focus{border-color:#0066cc}
+.mm-income-input::placeholder,.mm-profit-input::placeholder{color:#c7c7cc}
 
 .lock-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#f5f5f7;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px}
 .lock-overlay.hidden{display:none}
@@ -172,11 +173,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
       </div>
       <div class="income-item">
         <div class="income-label">今日营收</div>
-        <div class="income-value"><span class="symbol">¥</span><input type="number" id="dailyIncome" class="income-input" placeholder="0" step="0.01"></div>
+        <div class="income-value"><span class="symbol">¥</span><span id="dailyIncome" class="income-static">0.00</span></div>
       </div>
       <div class="income-item">
         <div class="income-label">日净利润</div>
-        <div class="income-value"><span class="symbol" style="color:#34c759">◆</span><input type="number" id="dailyProfit" class="income-input" placeholder="0" step="0.01"></div>
+        <div class="income-value"><span class="symbol" style="color:#34c759">◆</span><span id="dailyProfit" class="income-static">0.00</span></div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:#86868b">
@@ -198,7 +199,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
       <div class="card-title"><span class="icon" style="background:#7c3aed">◉</span>日常任务</div>
       <div class="mm-toolbar">
         <button class="mm-p" onclick="mmAddParent()">+ 添加</button>
-        <span style="font-size:11px;color:#c7c7cc">▶ 展开/收起 · 点击圆圈完成</span>
+        <span style="font-size:11px;color:#c7c7cc">▶ 展开/收起 · 点击圆圈完成 · 子任务填收入自动完成</span>
       </div>
       <ul class="mm-list" id="mmList">
         <li class="mm-empty">添加一些日常任务吧</li>
@@ -324,14 +325,24 @@ cl();
 // ===================== 营收 · 利润 =====================
 function ud(){var d=new Date();document.getElementById('dateDisplay').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';}
 ud();
+
+function calcDailyIncome(){
+  var mm=ld('mindmap',{children:[]});
+  var totalInc=0,totalPrf=0;
+  if(mm.children){mm.children.forEach(function(p){
+    if(p.children){p.children.forEach(function(c){
+      totalInc+=parseFloat(c.income)||0;
+      totalPrf+=parseFloat(c.profit)||0;
+    });}
+  });}
+  document.getElementById('dailyIncome').textContent=totalInc.toFixed(2);
+  document.getElementById('dailyProfit').textContent=totalPrf.toFixed(2);
+  return {income:totalInc,profit:totalPrf};
+}
+
 function ct(){var i=ld('incomes',{}),t=0;for(var k in i)t+=parseFloat(i[k])||0;document.getElementById('totalIncome').textContent=t.toFixed(2);}
-function ldi(){var k=gtk(),i=ld('incomes',{});document.getElementById('dailyIncome').value=i[k]||'';ct();}
-var it;document.getElementById('dailyIncome').addEventListener('input',function(){clearTimeout(it);var s=this;it=setTimeout(function(){var raw=s.value.trim();if(raw==='-'||raw==='')return;var v=parseFloat(raw)||0,k=gtk(),i=ld('incomes',{});if(v!==0)i[k]=v;else delete i[k];sd('incomes',i);ct();},300);});
-ldi();
 function pct(){var i=ld('profits',{}),t=0;for(var k in i)t+=parseFloat(i[k])||0;document.getElementById('totalProfit').textContent=t.toFixed(2);}
-function pldi(){var k=gtk(),i=ld('profits',{});document.getElementById('dailyProfit').value=i[k]||'';pct();}
-var pit;document.getElementById('dailyProfit').addEventListener('input',function(){clearTimeout(pit);var s=this;pit=setTimeout(function(){var raw=s.value.trim();if(raw==='-'||raw==='')return;var v=parseFloat(raw)||0,k=gtk(),i=ld('profits',{});if(v!==0)i[k]=v;else delete i[k];sd('profits',i);pct();},300);});
-pldi();
+ct();pct();
 
 // ===================== 收支明细 =====================
 var incHistOpen=false;
@@ -340,14 +351,30 @@ function toggleIncHist(){
   var p=document.getElementById('incHistPanel'),t=document.getElementById('incHistToggle');
   if(!incHistOpen){p.style.display='none';t.textContent='查看收支明细';return;}
   t.textContent='收起明细';
-  var inc=ld('incomes',{}),prf=ld('profits',{}),allDates=Object.keys(inc).concat(Object.keys(prf)).filter(function(v,i,a){return a.indexOf(v)===i;}).sort().reverse(),html='';
-  if(!allDates.length){p.innerHTML='<div style="color:#c7c7cc;font-size:12px;padding:10px;text-align:center">暂无记录</div>';p.style.display='';return;}
-  var incTotal=0,prfTotal=0;
-  allDates.forEach(function(d){
-    var iv=parseFloat(inc[d])||0,pv=parseFloat(prf[d])||0;incTotal+=iv;prfTotal+=pv;
-    html+='<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;background:#fafafa;border-radius:6px;margin-bottom:2px;font-size:12px"><span style="color:#86868b;font-size:11px;min-width:76px">'+d+'</span><span style="flex:1;text-align:right"><span style="color:#0066cc">¥</span> '+iv.toFixed(2)+'</span><span style="flex:1;text-align:right"><span style="color:#34c759">◆</span> '+pv.toFixed(2)+'</span></div>';
+  var hist=ld('mmIncomeHistory',{}),dates=Object.keys(hist).sort().reverse(),html='';
+  if(!dates.length){p.innerHTML='<div style="color:#c7c7cc;font-size:12px;padding:10px;text-align:center">暂无记录</div>';p.style.display='';return;}
+  var grandInc=0,grandPrf=0;
+  dates.forEach(function(d){
+    var day=hist[d],dayInc=0,dayPrf=0;
+    var dayHtml='';
+    day.forEach(function(cat){
+      var catInc=cat.income||0,catPrf=cat.profit||0;
+      dayInc+=catInc;dayPrf+=catPrf;
+      var childHtml='';
+      if(cat.children&&cat.children.length){
+        cat.children.forEach(function(ch){
+          var chInc=parseFloat(ch.income)||0,chPrf=parseFloat(ch.profit)||0;
+          if(chInc||chPrf){
+            childHtml+='<span style="display:inline-block;padding:2px 6px;background:#f5f5f7;border-radius:4px;margin-right:4px;font-size:11px"><span style="color:#666">'+ch.label+'</span> <span style="color:#0066cc">¥'+chInc.toFixed(0)+'</span> <span style="color:#34c759">◆'+chPrf.toFixed(0)+'</span></span>';
+          }
+        });
+      }
+      dayHtml+='<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px"><span style="font-weight:600;color:#1d1d1f">'+cat.label+'</span> <span style="color:#0066cc">¥'+catInc.toFixed(0)+'</span> <span style="color:#34c759">◆'+catPrf.toFixed(0)+'</span>'+(childHtml?'<span style="color:#c7c7cc;margin:0 3px">{</span>'+childHtml+'<span style="color:#c7c7cc;margin-left:3px">}</span>':'')+'</span>';
+    });
+    grandInc+=dayInc;grandPrf+=dayPrf;
+    html+='<div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#fafafa;border-radius:6px;margin-bottom:3px;font-size:12px;flex-wrap:wrap"><span style="color:#86868b;font-size:11px;white-space:nowrap">'+d+'</span>'+dayHtml+'</div>';
   });
-  html+='<div style="display:flex;align-items:center;gap:8px;padding:4px 8px;background:#e6f1fb;border-radius:6px;margin-top:4px;font-size:12px;font-weight:600"><span style="min-width:76px;color:#86868b">合计</span><span style="flex:1;text-align:right">¥ '+incTotal.toFixed(2)+'</span><span style="flex:1;text-align:right">◆ '+prfTotal.toFixed(2)+'</span></div>';
+  html+='<div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#e6f1fb;border-radius:6px;margin-top:4px;font-size:12px;font-weight:600"><span style="color:#86868b">合计</span><span style="color:#0066cc">¥ '+grandInc.toFixed(2)+'</span><span style="color:#34c759">◆ '+grandPrf.toFixed(2)+'</span></div>';
   p.innerHTML=html;p.style.display='';
 }
 
@@ -381,18 +408,51 @@ function toggleHist(){
   p.innerHTML=html;p.style.display='';
 }
 
-// ===================== 日常任务（每日重置 + 层级列表） =====================
+// ===================== 日常任务（每日重置 + 层级列表 + 收入） =====================
 function runDailyReset(){
   var mmLastDate=ld('mmDate',''),mmToday=gtk();
   if(mmLastDate!==mmToday){
+    // 归档前一天数据
+    if(mmLastDate){
+      var mmData=ld('mindmap',null);
+      if(mmData&&mmData.children&&mmData.children.length){
+        var archive=[];
+        mmData.children.forEach(function(p){
+          var cat={label:p.label,income:0,profit:0,children:[]};
+          if(p.children){
+            p.children.forEach(function(c){
+              var ci=parseFloat(c.income)||0,cp=parseFloat(c.profit)||0;
+              if(ci||cp){cat.income+=ci;cat.profit+=cp;cat.children.push({label:c.label,income:ci,profit:cp});}
+            });
+          }
+          archive.push(cat);
+        });
+        if(archive.length){
+          var hist=ld('mmIncomeHistory',{});
+          hist[mmLastDate]=archive;
+          sd('mmIncomeHistory',hist);
+        }
+      }
+    }
+    // 重置状态
     var mmData=ld('mindmap',null);
-    if(mmData&&mmData.children&&mmData.children.length){mmData.children.forEach(function(c){c.done=false;if(c.children)c.children.forEach(function(s){s.done=false;});});sd('mindmap',mmData);}
+    if(mmData&&mmData.children&&mmData.children.length){
+      mmData.children.forEach(function(c){
+        c.done=false;
+        c.income=0;c.profit=0;
+        if(c.children)c.children.forEach(function(s){
+          s.done=false;
+          s.income=0;s.profit=0;
+        });
+      });
+      sd('mindmap',mmData);
+    }
     sd('mmDate',mmToday);
   }
 }
 runDailyReset();
 
-var mmData=ld('mindmap',{children:[{label:'电商',done:false,children:[{label:'上新',done:false},{label:'客服',done:false},{label:'发货',done:false}]},{label:'自媒体',done:false,children:[{label:'写文案',done:false},{label:'拍摄',done:false},{label:'发布',done:false}]},{label:'个人',done:false,children:[{label:'学习',done:false},{label:'复盘',done:false}]}]});
+var mmData=ld('mindmap',{children:[{label:'电商',done:false,income:0,profit:0,children:[{label:'多多',done:false,income:0,profit:0},{label:'抖店',done:false,income:0,profit:0},{label:'淘宝',done:false,income:0,profit:0}]},{label:'自媒体',done:false,income:0,profit:0,children:[{label:'小红书',done:false,income:0,profit:0},{label:'抖音',done:false,income:0,profit:0},{label:'B站',done:false,income:0,profit:0}]},{label:'个人',done:false,income:0,profit:0,children:[{label:'学习',done:false,income:0,profit:0},{label:'复盘',done:false,income:0,profit:0}]}]});
 var mmOpen={};
 function mmSave(){sd('mindmap',mmData);}
 function mmMakeLabel(node,li,icon){
@@ -418,7 +478,7 @@ function mmRender(){
     var icon=document.createElement('span');icon.className='mm-icon';icon.textContent=p.done?'✓':'';icon.onclick=function(){var nd=!p.done;p.done=nd;if(p.children)p.children.forEach(function(c){c.done=nd;});mmSave();mmRender();};
     li.appendChild(icon);
     li.appendChild(mmMakeLabel(p,li,icon));
-    var addBtn=document.createElement('button');addBtn.className='mm-add-child';addBtn.textContent='+';addBtn.title='添加子任务';addBtn.onclick=function(){if(!p.children)p.children=[];p.children.push({label:'子任务',done:false});mmOpen[i]=true;mmSave();mmRender();};
+    var addBtn=document.createElement('button');addBtn.className='mm-add-child';addBtn.textContent='+';addBtn.title='添加子任务';addBtn.onclick=function(){if(!p.children)p.children=[];p.children.push({label:'子任务',done:false,income:0,profit:0});mmOpen[i]=true;mmSave();mmRender();};
     li.appendChild(addBtn);
     var delBtn=document.createElement('button');delBtn.className='mm-del';delBtn.textContent='✕';delBtn.onclick=function(){mmData.children.splice(i,1);mmSave();mmRender();};
     li.appendChild(delBtn);
@@ -439,7 +499,18 @@ function mmRender(){
         cinp.onkeydown=function(e){if(e.key==='Enter')cinp.blur();};
         cwrap.appendChild(ctxt);cwrap.appendChild(cinp);
         cli.appendChild(cwrap);
-        var cd=document.createElement('button');cd.className='mm-del';cd.textContent='✕';cd.onclick=function(){p.children.splice(j,1);mmSave();mmRender();};
+
+        // 收入输入
+        var incInp=document.createElement('input');incInp.className='mm-income-input';incInp.placeholder='¥';incInp.value=(c.income?c.income:'');
+        incInp.oninput=function(){clearTimeout(c._incT);c._incT=setTimeout(function(){var v=parseFloat(incInp.value)||0;c.income=v;if(v>0||parseFloat(c.profit||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();},300);};
+        cli.appendChild(incInp);
+
+        // 利润输入
+        var prfInp=document.createElement('input');prfInp.className='mm-profit-input';prfInp.placeholder='◆';prfInp.value=(c.profit?c.profit:'');
+        prfInp.oninput=function(){clearTimeout(c._prfT);c._prfT=setTimeout(function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();},300);};
+        cli.appendChild(prfInp);
+
+        var cd=document.createElement('button');cd.className='mm-del';cd.textContent='✕';cd.onclick=function(){p.children.splice(j,1);mmSave();mmRender();calcDailyIncome();};
         cli.appendChild(cd);
         childUl.appendChild(cli);
       });
@@ -447,8 +518,9 @@ function mmRender(){
     }
   });
   enableDragSort(list,function(){return mmData.children;},function(d,oldD){mmData.children=d;if(oldD){var newOpen={};d.forEach(function(c,ni){var oi=oldD.indexOf(c);if(mmOpen[oi])newOpen[ni]=true;});mmOpen=newOpen;}mmSave();},mmRender,':scope > li.mm-parent');
+  calcDailyIncome();
 }
-function mmAddParent(){if(!mmData.children)mmData.children=[];mmData.children.push({label:'分类',done:false,children:[]});mmSave();mmRender();}
+function mmAddParent(){if(!mmData.children)mmData.children=[];mmData.children.push({label:'分类',done:false,income:0,profit:0,children:[]});mmSave();mmRender();}
 mmRender();
 
 // ===================== 可选任务（链接） =====================
@@ -476,7 +548,7 @@ document.getElementById('linkNameInput').addEventListener('keydown',function(e){
 rl();
 
 // ===================== 手动同步按钮 =====================
-function syncAll(){var ks=['incomes','mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','profits'];ks.forEach(function(k){var d=ld(k,null);if(d!==null){sd(k,d);}});document.getElementById('syncBtn').textContent='☁️';setTimeout(function(){document.getElementById('syncBtn').textContent='☁';},2000);}
+function syncAll(){var ks=['incomes','mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','profits','mmIncomeHistory'];ks.forEach(function(k){var d=ld(k,null);if(d!==null){sd(k,d);}});document.getElementById('syncBtn').textContent='☁️';setTimeout(function(){document.getElementById('syncBtn').textContent='☁';},2000);}
 </script>
 </body>
 </html>
