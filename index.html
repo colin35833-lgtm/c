@@ -528,6 +528,7 @@ function mmRender(){
         cli.appendChild(cd);
         childUl.appendChild(cli);
       });
+      enableDragSort(childUl,function(){return p.children;},function(d){p.children=d;mmSave();},mmRender,':scope > li');
       list.appendChild(childUl);
     }
   });
