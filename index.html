@@ -160,8 +160,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     <p>输入密码解锁</p>
     <input type="password" id="lockPwdInput" placeholder="密码" maxlength="20" autofocus>
     <div class="lock-error" id="lockError"></div>
-    <button type="button" class="lock-btn" onclick="unlock()">解锁</button>
-    <button type="button" class="lock-hint" onclick="showSetup()">设置新密码</button>
+    <button type="button" class="lock-btn" onclick="ul()">解锁</button>
+    <button type="button" class="lock-hint" onclick="ss()">设置新密码</button>
   </div>
   <div class="lock-setup" id="lockSetup" style="display:none">
     <h2>设置密码</h2>
@@ -170,8 +170,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     <input type="password" id="setupPwdInput" placeholder="新密码" maxlength="20" autofocus>
     <input type="password" id="setupPwdConfirm" placeholder="再次输入新密码" maxlength="20">
     <div class="lock-error" id="setupError"></div>
-    <button type="button" class="lock-btn" onclick="setupPassword()">确认</button>
-    <button type="button" class="lock-hint" id="setupBack" onclick="backToLock()" style="display:none;margin-top:10px">返回</button>
+    <button type="button" class="lock-btn" onclick="sp()">确认</button>
+    <button type="button" class="lock-hint" id="setupBack" onclick="bl()" style="display:none;margin-top:10px">返回</button>
   </div>
 </div>
 <div class="container">
