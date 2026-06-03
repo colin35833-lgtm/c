@@ -131,6 +131,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .dragging{opacity:.5;outline:2px dashed #0066cc}
 .drag-over{position:relative}
 .drag-over::before{content:'';position:absolute;top:-2px;left:0;right:0;height:2px;background:#0066cc;border-radius:1px}
+
+/* 链接设置按钮（hover显示） */
+.task-list li .link-set{width:22px;height:22px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;border-radius:4px;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
+.task-list li:hover .link-set{opacity:1}
+.task-list li .link-set:hover{color:#0066cc;background:#e6f1fb}
+.task-list li .task-url{font-size:12px;color:#0066cc;text-decoration:none;padding:2px 6px;border-radius:4px;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.task-list li .task-url:hover{background:#e6f1fb;text-decoration:underline}
+
+.mm-list .mm-parent .mm-link-set{width:20px;height:20px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;border-radius:4px;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
+.mm-list .mm-parent:hover .mm-link-set{opacity:1}
+.mm-list .mm-parent .mm-link-set:hover{color:#0066cc;background:#e6f1fb}
+.mm-list .mm-parent .mm-url{font-size:12px;color:#0066cc;text-decoration:none;padding:2px 6px;border-radius:4px;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.mm-list .mm-parent .mm-url:hover{background:#e6f1fb;text-decoration:underline}
+
+.mm-list .mm-child li .mm-link-set{width:16px;height:16px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
+.mm-list .mm-child li:hover .mm-link-set{opacity:1}
+.mm-list .mm-child li .mm-link-set:hover{color:#0066cc;background:#e6f1fb}
+.mm-list .mm-child li .mm-url{font-size:11px;color:#0066cc;text-decoration:none;padding:1px 4px;border-radius:3px;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.mm-list .mm-child li .mm-url:hover{background:#e6f1fb;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -382,13 +401,13 @@ function toggleIncHist(){
 
 // ===================== 主线任务（次日自动归档） =====================
 function runMainTaskArchive(){var ld_=ld('mtDate',''),td_=gtk();if(ld_!==td_){var ts_=ld('mainTasks',[]),done_=[];for(var i_=ts_.length-1;i_>=0;i_--){if(ts_[i_].done){done_.push(ts_[i_]);ts_.splice(i_,1);}}if(done_.length&&ld_){var h_=ld('taskHistory',{});if(!h_[ld_])h_[ld_]=[];done_.forEach(function(t){h_[ld_].push({text:t.text,time:'归档'});});sd('taskHistory',h_);}sd('mainTasks',ts_);sd('mtDate',td_);}}
-function rmt(){var l=document.getElementById('mainTaskList'),t=ld('mainTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('mainTasks',t);rmt();};li.appendChild(ic);li.appendChild(sp);li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('mainTasks',[]);},function(d){sd('mainTasks',d);},rmt);}
+function rmt(){var l=document.getElementById('mainTaskList'),t=ld('mainTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};li.appendChild(ic);li.appendChild(sp);if(e.url){var ua=document.createElement('a');ua.className='task-url';ua.href=e.url;ua.target='_blank';ua.rel='noopener noreferrer';ua.textContent='↗';ua.onclick=function(ev){ev.stopPropagation();};li.appendChild(ua);}var lb=document.createElement('button');lb.className='link-set';lb.textContent='🔗';lb.title=e.url?'修改链接':'添加链接';lb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',e.url||'');if(u===null)return;e.url=u?u:undefined;sd('mainTasks',t);rmt();};li.appendChild(lb);var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('mainTasks',t);rmt();};li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('mainTasks',[]);},function(d){sd('mainTasks',d);},rmt);}
 function amt(){var i=document.getElementById('mainTaskInput'),t=i.value.trim();if(!t)return;var ts=ld('mainTasks',[]);ts.push({text:t,done:false});sd('mainTasks',ts);rmt();i.value='';i.focus();}
 document.getElementById('mainTaskInput').addEventListener('keydown',function(e){if(e.key==='Enter')amt();});rmt();
 
 // ===================== 可选任务（次日自动归档） =====================
 function runDevTaskArchive(){var dd_=ld('devDate',''),td_=gtk();if(dd_!==td_){var ds_=ld('devTasks',[]),done_=[];for(var di_=ds_.length-1;di_>=0;di_--){if(ds_[di_].done){done_.push(ds_[di_]);ds_.splice(di_,1);}}if(done_.length&&dd_){var dh_=ld('devTaskHistory',{});if(!dh_[dd_])dh_[dd_]=[];done_.forEach(function(t){dh_[dd_].push({text:t.text,time:'归档'});});sd('devTaskHistory',dh_);}sd('devTasks',ds_);sd('devDate',td_);}}
-function rdt(){var l=document.getElementById('devTaskList'),t=ld('devTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('devTasks',t);rdt();};li.appendChild(ic);li.appendChild(sp);li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('devTasks',[]);},function(d){sd('devTasks',d);},rdt);}
+function rdt(){var l=document.getElementById('devTaskList'),t=ld('devTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};li.appendChild(ic);li.appendChild(sp);if(e.url){var ua=document.createElement('a');ua.className='task-url';ua.href=e.url;ua.target='_blank';ua.rel='noopener noreferrer';ua.textContent='↗';ua.onclick=function(ev){ev.stopPropagation();};li.appendChild(ua);}var lb=document.createElement('button');lb.className='link-set';lb.textContent='🔗';lb.title=e.url?'修改链接':'添加链接';lb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',e.url||'');if(u===null)return;e.url=u?u:undefined;sd('devTasks',t);rdt();};li.appendChild(lb);var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('devTasks',t);rdt();};li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('devTasks',[]);},function(d){sd('devTasks',d);},rdt);}
 function adt(){var i=document.getElementById('devTaskInput'),t=i.value.trim();if(!t)return;var ts=ld('devTasks',[]);ts.push({text:t,done:false});sd('devTasks',ts);rdt();i.value='';i.focus();}
 document.getElementById('devTaskInput').addEventListener('keydown',function(e){if(e.key==='Enter')adt();});rdt();
 
@@ -494,6 +513,9 @@ function mmRender(){
     li.appendChild(mmMakeLabel(p,li,icon));
     var addBtn=document.createElement('button');addBtn.className='mm-add-child';addBtn.textContent='+';addBtn.title='添加子任务';addBtn.onclick=function(){if(!p.children)p.children=[];p.children.push({label:'子任务',done:false,income:0,profit:0});mmOpen[i]=true;mmSave();mmRender();};
     li.appendChild(addBtn);
+    if(p.url){var pua=document.createElement('a');pua.className='mm-url';pua.href=p.url;pua.target='_blank';pua.rel='noopener noreferrer';pua.textContent='↗';pua.onclick=function(ev){ev.stopPropagation();};li.appendChild(pua);}
+    var plb=document.createElement('button');plb.className='mm-link-set';plb.textContent='🔗';plb.title=p.url?'修改链接':'添加链接';plb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',p.url||'');if(u===null)return;p.url=u?u:undefined;mmSave();mmRender();};
+    li.appendChild(plb);
     var delBtn=document.createElement('button');delBtn.className='mm-del';delBtn.textContent='✕';delBtn.onclick=function(){mmData.children.splice(i,1);mmSave();mmRender();};
     li.appendChild(delBtn);
     list.appendChild(li);
@@ -528,6 +550,9 @@ function mmRender(){
         prfInp.onkeydown=function(e){if(e.key==='Enter')prfInp.blur();};
         cli.appendChild(prfInp);
 
+        if(c.url){var cua=document.createElement('a');cua.className='mm-url';cua.href=c.url;cua.target='_blank';cua.rel='noopener noreferrer';cua.textContent='↗';cua.onclick=function(ev){ev.stopPropagation();};cli.appendChild(cua);}
+        var clb=document.createElement('button');clb.className='mm-link-set';clb.textContent='🔗';clb.title=c.url?'修改链接':'添加链接';clb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',c.url||'');if(u===null)return;c.url=u?u:undefined;mmSave();mmRender();calcDailyIncome();};
+        cli.appendChild(clb);
         var cd=document.createElement('button');cd.className='mm-del';cd.textContent='✕';cd.onclick=function(){p.children.splice(j,1);mmSave();mmRender();calcDailyIncome();};
         cli.appendChild(cd);
         childUl.appendChild(cli);
