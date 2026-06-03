@@ -258,10 +258,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 </div>
 <script>
 // ===================== 数据层 =====================
+var _syncTimers={},_syncBody={};
 function sd(k,d){
   localStorage.setItem('zhuye2_'+k,JSON.stringify(d));
-  var b=JSON.stringify({id:k,data:d});
-  (function push(){fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{method:'POST',headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:b}).catch(function(){setTimeout(push,3000);});})();
+  _syncBody[k]=JSON.stringify({id:k,data:d});
+  if(_syncTimers[k]){clearTimeout(_syncTimers[k]);}
+  _syncTimers[k]=setTimeout(function(){
+    _syncTimers[k]=null;
+    var b=_syncBody[k],attempts=0;
+    function push(){
+      attempts++;
+      fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{method:'POST',headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:b})
+      .then(function(r){
+        if(r.ok){console.log('☁️ 同步成功:',k);return;}
+        if(attempts<3){console.warn('☁️ 同步重试('+attempts+'):',k);setTimeout(push,3000*attempts);}
+        else{console.error('☁️ 同步失败:',k,r.status);}
+      })
+      .catch(function(e){
+        if(attempts<3){console.warn('☁️ 网络错误,重试('+attempts+'):',k);setTimeout(push,3000*attempts);}
+        else{console.error('☁️ 同步失败(网络):',k,e.message);}
+      });
+    }
+    push();
+  },500);
 }
 function ld(k,d){try{var v=localStorage.getItem('zhuye2_'+k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function gtk(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
