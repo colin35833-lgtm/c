@@ -262,7 +262,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 </div>
 <script>
 // ===================== 数据层 =====================
-var _syncTimers={},_syncBody={};
 function _utf8_to_b64(str){return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,function(m,p1){return String.fromCharCode('0x'+p1);}));}
 function _b64_to_utf8(str){return decodeURIComponent(atob(str).split('').map(function(c){return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2);}).join(''));}
 function _enc(data,pwd){if(!pwd||pwd==='')return data;var s=JSON.stringify(data),out='';for(var i=0;i<s.length;i++){out+=String.fromCharCode(s.charCodeAt(i)^pwd.charCodeAt(i%pwd.length));}return{__enc:true,payload:_utf8_to_b64(out)};}
@@ -290,16 +289,10 @@ function sd(k,d,opts){
   opts=opts||{};
   if(k==='password'){localStorage.setItem('zhuye2_'+k,d);}
   else{localStorage.setItem('zhuye2_'+k,JSON.stringify(d));}
+  if(!opts.push)return;
   var pwd=localStorage.getItem(PK)||'';
   var bodyObj={id:k,data:(k==='password'?d:_enc(d,pwd)),updated_at:new Date().toISOString()};
-  var b=JSON.stringify(bodyObj);
-  if(opts.immediate){return _doSync(k,b);}
-  _syncBody[k]=b;
-  if(_syncTimers[k]){clearTimeout(_syncTimers[k]);}
-  _syncTimers[k]=setTimeout(function(){
-    _syncTimers[k]=null;
-    _doSync(k,_syncBody[k]);
-  },500);
+  return _doSync(k,JSON.stringify(bodyObj));
 }
 function ld(k,d){try{var v=localStorage.getItem('zhuye2_'+k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function gtk(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -375,7 +368,7 @@ function sp(){
   var p=document.getElementById('setupPwdInput').value,c=document.getElementById('setupPwdConfirm').value;
   if(!p){e.textContent='请输入新密码';return;}if(p.length<3){e.textContent='密码至少3位';return;}if(p!==c){e.textContent='两次密码不一致';return;}
   e.textContent='';localStorage.setItem(PK,p);sessionStorage.setItem(UK,'1');document.getElementById('lockOverlay').classList.add('hidden');
-  sd('password',p,{immediate:true});
+  sd('password',p,{push:true});
 }
 function ul(){
   var p=document.getElementById('lockPwdInput').value,e=document.getElementById('lockError'),s=localStorage.getItem(PK);
@@ -651,8 +644,8 @@ function syncAll(){
   var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
   var promises=[],count=0;
   var pwd=localStorage.getItem(PK);
-  if(pwd){count++;promises.push(sd('password',pwd,{immediate:true}));}
-  ks.forEach(function(k){var d=ld(k,null);if(d!==null){count++;promises.push(sd(k,d,{immediate:true}));}});
+  if(pwd){count++;promises.push(sd('password',pwd,{push:true}));}
+  ks.forEach(function(k){var d=ld(k,null);if(d!==null){count++;promises.push(sd(k,d,{push:true}));}});
   if(!count){showToast('无数据需要同步','info');return;}
   document.getElementById('syncBtn').textContent='☁️';
   showToast('正在同步 '+count+' 项...','info');
