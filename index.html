@@ -309,7 +309,7 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
   .then(function(r){return r.json();}).then(function(rows){
     var hasData=false,pwd=localStorage.getItem(PK)||'';
     // 先拉密码（明文存储）
-    if(rows&&rows.length){rows.forEach(function(row){if(row.id==='password'&&row.data){if(!localStorage.getItem(PK)){localStorage.setItem(PK,row.data);pwd=row.data;}}});}
+    if(rows&&rows.length){rows.forEach(function(row){if(row.id==='password'&&row.data&&row.data!==''){if(!localStorage.getItem(PK)){localStorage.setItem(PK,row.data);pwd=row.data;}}});}
     // 再解密其他数据
     if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}else{var dec=_dec(row.data,pwd);if(dec!==null&&JSON.stringify(dec)!==localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
     if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
@@ -373,6 +373,7 @@ function sp(){
   var p=document.getElementById('setupPwdInput').value,c=document.getElementById('setupPwdConfirm').value;
   if(!p){e.textContent='请输入新密码';return;}if(p.length<3){e.textContent='密码至少3位';return;}if(p!==c){e.textContent='两次密码不一致';return;}
   e.textContent='';localStorage.setItem(PK,p);sessionStorage.setItem(UK,'1');document.getElementById('lockOverlay').classList.add('hidden');
+  sd('password',p,{immediate:true});
 }
 function ul(){
   var p=document.getElementById('lockPwdInput').value,e=document.getElementById('lockError'),s=localStorage.getItem(PK);
@@ -644,6 +645,7 @@ function showToast(msg,type){
   clearTimeout(t._hideT);t._hideT=setTimeout(function(){t.style.opacity='0';},2500);
 }
 function syncAll(){
+  try{
   var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
   var promises=[],count=0;
   var pwd=localStorage.getItem(PK);
@@ -658,6 +660,7 @@ function syncAll(){
     else{showToast('⚠️ 同步完成 ('+ok+'/'+count+')','err');}
     setTimeout(function(){document.getElementById('syncBtn').textContent='☁';},1500);
   });
+  }catch(e){console.error('syncAll 错误:',e);showToast('同步出错: '+e.message,'err');document.getElementById('syncBtn').textContent='☁';}
 }
 </script>
 </body>
