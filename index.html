@@ -181,7 +181,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 <div class="container">
   <div class="header">
     <h1>工作主页</h1>
-    <p>电商 · 自媒体 · 日常</p><span id="syncBtn" onclick="syncAll()" style="cursor:pointer;font-size:16px;margin-left:8px;user-select:none" title="手动同步所有数据到云端">☁</span>
+    <p>电商 · 自媒体 · 日常</p><span id="downBtn" onclick="downAll()" style="cursor:pointer;font-size:14px;margin-left:4px;user-select:none" title="从云端下载覆盖本地数据">⬇</span><span id="syncBtn" onclick="syncAll()" style="cursor:pointer;font-size:16px;margin-left:4px;user-select:none" title="手动同步所有数据到云端">☁</span>
   </div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-title"><span class="icon" style="background:#0066cc">¥</span>营收 · 利润</div>
@@ -312,8 +312,8 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
     var hasData=false,pwd=localStorage.getItem(PK)||'';
     // 先拉密码（明文存储）
     if(rows&&rows.length){rows.forEach(function(row){if(row.id==='password'&&row.data&&row.data!==''){if(!localStorage.getItem(PK)){localStorage.setItem(PK,row.data);pwd=row.data;}}});}
-    // 再解密其他数据
-    if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}else{var dec=_dec(row.data,pwd);if(dec!==null&&JSON.stringify(dec)!==localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
+    // 再解密其他数据（仅补充本地没有的，绝不覆盖）
+    if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
     if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
     sessionStorage.setItem('zhuye2_synced','1');
     cl();
@@ -663,6 +663,23 @@ function syncAll(){
     setTimeout(function(){document.getElementById('syncBtn').textContent='☁';},1500);
   });
   }catch(e){console.error('syncAll 错误:',e);showToast('同步出错: '+e.message,'err');document.getElementById('syncBtn').textContent='☁';}
+}
+function downAll(){
+  try{
+    document.getElementById('downBtn').textContent='⬇️';
+    showToast('正在从云端下载...','info');
+    fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq'}})
+    .then(function(r){return r.json();}).then(function(rows){
+      var pwd=localStorage.getItem(PK)||'',ok=0,fail=0;
+      if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem('zhuye2_'+row.id,JSON.stringify(dec));ok++;}else{fail++;}}if(row.id==='password'&&row.data&&row.data!==''){localStorage.setItem(PK,row.data);ok++;}});}
+      showToast('下载完成 ('+ok+'/'+(ok+fail)+')','ok');
+      document.getElementById('downBtn').textContent='⬇';
+      setTimeout(function(){location.reload();},1000);
+    }).catch(function(e){
+      showToast('下载失败: '+e.message,'err');
+      document.getElementById('downBtn').textContent='⬇';
+    });
+  }catch(e){console.error('downAll 错误:',e);showToast('下载出错: '+e.message,'err');document.getElementById('downBtn').textContent='⬇';}
 }
 </script>
 </body>
