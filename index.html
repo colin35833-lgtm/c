@@ -259,6 +259,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 <script>
 // ===================== 数据层 =====================
 var _syncTimers={},_syncBody={};
+function _enc(data,pwd){if(!pwd||pwd==='')return data;var s=JSON.stringify(data),out='';for(var i=0;i<s.length;i++){out+=String.fromCharCode(s.charCodeAt(i)^pwd.charCodeAt(i%pwd.length));}return{__enc:true,payload:btoa(out)};}
+function _dec(raw,pwd){if(!raw||typeof raw!=='object'||!raw.__enc)return raw;if(!pwd||pwd==='')return null;try{var s=atob(raw.payload),out='';for(var i=0;i<s.length;i++){out+=String.fromCharCode(s.charCodeAt(i)^pwd.charCodeAt(i%pwd.length));}return JSON.parse(out);}catch(e){console.error('解密失败');return null;}}
 function _doSync(k,b){
   return new Promise(function(resolve){
     var attempts=0;
@@ -281,7 +283,7 @@ function _doSync(k,b){
 function sd(k,d,opts){
   opts=opts||{};
   localStorage.setItem('zhuye2_'+k,JSON.stringify(d));
-  var bodyObj={id:k,data:d,updated_at:new Date().toISOString()};
+  var bodyObj={id:k,data:_enc(d,ld('password','')),updated_at:new Date().toISOString()};
   var b=JSON.stringify(bodyObj);
   if(opts.immediate){return _doSync(k,b);}
   _syncBody[k]=b;
@@ -300,7 +302,7 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
   fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq'}})
   .then(function(r){return r.json();}).then(function(rows){
     var hasData=false;
-    if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(row.data));hasData=true;}}});}
+    if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,ld('password',''));if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}else{var dec=_dec(row.data,ld('password',''));if(dec!==null&&JSON.stringify(dec)!==localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
     if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
     sessionStorage.setItem('zhuye2_synced','1');
     if(!localStorage.getItem(PK)){location.reload();}
