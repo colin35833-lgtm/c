@@ -530,7 +530,7 @@ function mmSave(){var clean=JSON.parse(JSON.stringify(mmData));function strip(o)
 function mmMakeLabel(node,li,icon){
   var wrap=document.createElement('span');wrap.style.cssText='flex:1;display:flex;align-items:center;min-width:0';
   var txt=document.createElement('span');txt.className='mm-label';txt.textContent=node.label;
-  var inp=document.createElement('input');inp.type='text';inp.value=node.label;
+  var inp=document.createElement('input');inp.type='text';inp.value=node.label;inp.className='mm-label-input';
   inp.style.cssText='display:none;border:none;background:transparent;font-size:13px;color:inherit;outline:none;padding:2px 0;font-family:inherit;flex:1;min-width:30px';
   var mmClickT;
   txt.onclick=function(){if(mmClickT){clearTimeout(mmClickT);mmClickT=null;return;}mmClickT=setTimeout(function(){mmClickT=null;var nd=!node.done;node.done=nd;if(node.children)node.children.forEach(function(c){c.done=nd;});mmSave();mmRender();},220);};
@@ -541,6 +541,7 @@ function mmMakeLabel(node,li,icon){
   return wrap;
 }
 function mmRender(){
+  var edits=document.querySelectorAll('.mm-label-input');for(var ei=0;ei<edits.length;ei++){edits[ei].blur();}
   var list=document.getElementById('mmList');list.innerHTML='';
   if(!mmData.children||!mmData.children.length){var e=document.createElement('li');e.className='mm-empty';e.textContent='添加一些日常任务吧';list.appendChild(e);return;}
   mmData.children.forEach(function(p,i){
@@ -566,7 +567,7 @@ function mmRender(){
         cli.appendChild(ci);
         var cwrap=document.createElement('span');cwrap.style.cssText='flex:1;display:flex;align-items:center;min-width:0';
         var ctxt=document.createElement('span');ctxt.className='mm-label';ctxt.textContent=c.label;
-        var cinp=document.createElement('input');cinp.type='text';cinp.value=c.label;cinp.style.cssText='display:none;border:none;background:transparent;font-size:13px;color:inherit;outline:none;padding:2px 0;font-family:inherit;flex:1;min-width:30px';
+        var cinp=document.createElement('input');cinp.type='text';cinp.value=c.label;cinp.className='mm-label-input';cinp.style.cssText='display:none;border:none;background:transparent;font-size:13px;color:inherit;outline:none;padding:2px 0;font-family:inherit;flex:1;min-width:30px';
         var ctClickT;
         ctxt.onclick=function(){if(ctClickT){clearTimeout(ctClickT);ctClickT=null;return;}ctClickT=setTimeout(function(){ctClickT=null;c.done=!c.done;var ad=true;for(var k=0;k<p.children.length;k++){if(!p.children[k].done){ad=false;break;}}p.done=ad;mmSave();mmRender();},220);};
         ctxt.ondblclick=function(e){if(ctClickT){clearTimeout(ctClickT);ctClickT=null;}e.stopPropagation();ctxt.style.display='none';cinp.style.display='';cinp.focus();cinp.select();};
