@@ -659,6 +659,7 @@ function syncAll(){
   }catch(e){console.error('syncAll 错误:',e);showToast('同步出错: '+e.message,'err');document.getElementById('syncBtn').textContent='☁';}
 }
 function downAll(){
+  if(!confirm('⚠️ 确认从云端下载？这会覆盖本地所有数据！')){return;}
   try{
     document.getElementById('downBtn').textContent='⬇️';
     showToast('正在从云端下载...','info');
