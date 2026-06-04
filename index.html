@@ -286,8 +286,9 @@ function _doSync(k,b){
 }
 function sd(k,d,opts){
   opts=opts||{};
-  localStorage.setItem('zhuye2_'+k,JSON.stringify(d));
-  var pwd=ld('password','');
+  if(k==='password'){localStorage.setItem('zhuye2_'+k,d);}
+  else{localStorage.setItem('zhuye2_'+k,JSON.stringify(d));}
+  var pwd=localStorage.getItem(PK)||'';
   var bodyObj={id:k,data:(k==='password'?d:_enc(d,pwd)),updated_at:new Date().toISOString()};
   var b=JSON.stringify(bodyObj);
   if(opts.immediate){return _doSync(k,b);}
@@ -306,9 +307,9 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
 (function(){if(sessionStorage.getItem('zhuye2_synced'))return;
   fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq'}})
   .then(function(r){return r.json();}).then(function(rows){
-    var hasData=false,pwd=ld('password','');
+    var hasData=false,pwd=localStorage.getItem(PK)||'';
     // 先拉密码（明文存储）
-    if(rows&&rows.length){rows.forEach(function(row){if(row.id==='password'&&row.data){if(!localStorage.getItem(PK)){localStorage.setItem(PK,JSON.stringify(row.data));pwd=row.data;}}});}
+    if(rows&&rows.length){rows.forEach(function(row){if(row.id==='password'&&row.data){if(!localStorage.getItem(PK)){localStorage.setItem(PK,row.data);pwd=row.data;}}});}
     // 再解密其他数据
     if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}else{var dec=_dec(row.data,pwd);if(dec!==null&&JSON.stringify(dec)!==localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
     if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
