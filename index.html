@@ -155,7 +155,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 </head>
 <body>
 <div class="lock-overlay" id="lockOverlay">
-  <div class="lock-syncing" id="lockSyncing" style="text-align:center;padding:40px 20px">
+  <div class="lock-syncing" id="lockSyncing" style="text-align:center;padding:40px 20px;display:none">
     <h2>🔒 工作主页</h2>
     <p style="color:#86868b;margin-top:12px">正在同步数据...</p>
   </div>
@@ -306,6 +306,9 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
 
 // 首次打开从云端拉取（先拉密码，再用密码解密其他数据）
 (function(){if(sessionStorage.getItem('zhuye2_synced'))return;
+  var syncDone=false;
+  function finish(){if(syncDone)return;syncDone=true;sessionStorage.setItem('zhuye2_synced','1');runDailyReset();runMainTaskArchive();runDevTaskArchive();cl();}
+  setTimeout(finish,5000);
   fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq'}})
   .then(function(r){return r.json();}).then(function(rows){
     var hasData=false,pwd=localStorage.getItem(PK)||'';
@@ -314,13 +317,8 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
     // 再解密其他数据（仅补充本地没有的，绝不覆盖）
     if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
     if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
-    sessionStorage.setItem('zhuye2_synced','1');
-    cl();
-  }).catch(function(){
-    sessionStorage.setItem('zhuye2_synced','1');
-    runDailyReset();runMainTaskArchive();runDevTaskArchive();
-    cl();
-  });
+    finish();
+  }).catch(function(){finish();});
 })();
 
 function enableDragSort(listEl,getData,setData,renderFn,itemSelector){
@@ -362,7 +360,7 @@ function enableDragSort(listEl,getData,setData,renderFn,itemSelector){
 var PK='zhuye2_password',UK='zhuye2_unlocked';
 function cl(){
   var p=localStorage.getItem(PK);
-  if(!p&&!sessionStorage.getItem('zhuye2_synced')){document.getElementById('lockSyncing').style.display='';document.getElementById('lockSetup').style.display='none';document.getElementById('lockBox').style.display='none';return;}
+  if(!p&&!sessionStorage.getItem('zhuye2_synced')){document.getElementById('lockSyncing').style.display='block';document.getElementById('lockSetup').style.display='none';document.getElementById('lockBox').style.display='none';return;}
   document.getElementById('lockSyncing').style.display='none';
   if(!p){document.getElementById('lockSetup').style.display='';document.getElementById('lockBox').style.display='none';document.getElementById('setupOldPwd').style.display='none';document.getElementById('setupBack').style.display='none';document.getElementById('setupDesc').textContent='首次使用，请设置一个锁屏密码';document.getElementById('setupPwdInput').focus();}
   else if(sessionStorage.getItem(UK)){document.getElementById('lockOverlay').classList.add('hidden');}
