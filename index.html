@@ -179,9 +179,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
   </div>
 </div>
 <div class="container">
-  <div class="header">
-    <h1>工作主页</h1>
-    <p>电商 · 自媒体 · 日常</p><span id="downBtn" onclick="downAll()" style="cursor:pointer;font-size:20px;margin-left:8px;user-select:none;padding:4px 8px;border-radius:6px;transition:background .2s" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='transparent'" title="从云端下载覆盖本地数据">⬇</span><span id="syncBtn" onclick="syncAll()" style="cursor:pointer;font-size:22px;margin-left:4px;user-select:none;padding:4px 8px;border-radius:6px;transition:background .2s" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='transparent'" title="手动同步所有数据到云端">☁</span>
+  <div class="header" style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <h1>工作主页</h1>
+      <p>电商 · 自媒体 · 日常</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <span id="downBtn" onclick="downAll()" style="cursor:pointer;font-size:24px;user-select:none;padding:6px 10px;border-radius:8px;transition:background .2s" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='transparent'" title="从云端下载覆盖本地数据">⬇</span>
+      <span id="syncBtn" onclick="syncAll()" style="cursor:pointer;font-size:26px;user-select:none;padding:6px 10px;border-radius:8px;transition:background .2s" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='transparent'" title="手动同步所有数据到云端">☁</span>
+    </div>
   </div>
   <div class="card" style="margin-bottom:16px">
     <div class="card-title"><span class="icon" style="background:#0066cc">¥</span>营收 · 利润</div>
