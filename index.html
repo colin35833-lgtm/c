@@ -669,7 +669,7 @@ function downAll(){
       if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem('zhuye2_'+row.id,JSON.stringify(dec));ok++;}else{fail++;}}if(row.id==='password'&&row.data&&row.data!==''){localStorage.setItem(PK,row.data);ok++;}});}
       showToast('下载完成 ('+ok+'/'+(ok+fail)+')','ok');
       document.getElementById('downBtn').textContent='⬇';
-      setTimeout(function(){location.reload();},1000);
+      setTimeout(function(){document.querySelectorAll('.mm-label-input').forEach(function(el){el.blur();});location.reload();},1000);
     }).catch(function(e){
       showToast('下载失败: '+e.message,'err');
       document.getElementById('downBtn').textContent='⬇';
