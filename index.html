@@ -149,7 +149,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .mm-list .mm-child li .mm-link-set{width:16px;height:16px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;border-radius:4px;font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
 .mm-list .mm-child li:hover .mm-link-set{opacity:1}
 .mm-list .mm-child li .mm-link-set:hover{color:#0066cc;background:#e6f1fb}
-.mm-list .mm-child li .mm-url{font-size:11px;color:#0066cc;text-decoration:none;padding:4px 10px;border-radius:3px;transition:background .2s;white-space:nowrap;flex-shrink:0}
+.mm-list .mm-child li .mm-url{font-size:12px;color:#0066cc;text-decoration:none;padding:6px 20px;border-radius:6px;transition:background .2s;white-space:nowrap;flex-shrink:0;font-weight:500}
 .mm-list .mm-child li .mm-url:hover{background:#e6f1fb;text-decoration:underline}
 </style>
 </head>
@@ -582,7 +582,7 @@ function mmRender(){
         cwrap.appendChild(ctxt);cwrap.appendChild(cinp);
         cli.appendChild(cwrap);
 
-        if(c.url){var cua=document.createElement('a');cua.className='mm-url';cua.href=c.url;cua.target='_blank';cua.rel='noopener noreferrer';cua.textContent='↗';cua.onclick=function(ev){ev.stopPropagation();};cli.appendChild(cua);}
+        if(c.url){var cua=document.createElement('a');cua.className='mm-url';cua.href=c.url;cua.target='_blank';cua.rel='noopener noreferrer';cua.textContent='↗ 打开';cua.onclick=function(ev){ev.stopPropagation();};cli.appendChild(cua);}
 
         // 收入输入
         var incInp=document.createElement('input');incInp.className='mm-income-input';incInp.placeholder='¥';incInp.value=(c.income?c.income:'');
