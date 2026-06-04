@@ -526,7 +526,7 @@ runDevTaskArchive();
 var mmData=ld('mindmap',{children:[{label:'电商',done:false,income:0,profit:0,children:[{label:'多多',done:false,income:0,profit:0},{label:'抖店',done:false,income:0,profit:0},{label:'淘宝',done:false,income:0,profit:0}]},{label:'自媒体',done:false,income:0,profit:0,children:[{label:'小红书',done:false,income:0,profit:0},{label:'抖音',done:false,income:0,profit:0},{label:'B站',done:false,income:0,profit:0}]},{label:'个人',done:false,income:0,profit:0,children:[{label:'学习',done:false,income:0,profit:0},{label:'复盘',done:false,income:0,profit:0}]}]});
 
 var mmOpen={};
-function mmSave(){var clean=JSON.parse(JSON.stringify(mmData));function strip(o){if(!o||typeof o!=='object')return;Object.keys(o).forEach(function(k){if(k==='_incT'||k==='_prfT'||k==='ctClickT'||k==='mmClickT')delete o[k];if(o[k]&&typeof o[k]==='object')strip(o[k]);});}strip(clean);sd('mindmap',clean);mmData=JSON.parse(JSON.stringify(clean));}
+function mmSave(){var clean=JSON.parse(JSON.stringify(mmData));function strip(o){if(!o||typeof o!=='object')return;Object.keys(o).forEach(function(k){if(k==='_incT'||k==='_prfT'||k==='ctClickT'||k==='mmClickT'||k==='_lblT')delete o[k];if(o[k]&&typeof o[k]==='object')strip(o[k]);});}strip(clean);sd('mindmap',clean);mmData=JSON.parse(JSON.stringify(clean));}
 function mmMakeLabel(node,li,icon){
   var wrap=document.createElement('span');wrap.style.cssText='flex:1;display:flex;align-items:center;min-width:0';
   var txt=document.createElement('span');txt.className='mm-label';txt.textContent=node.label;
@@ -535,7 +535,8 @@ function mmMakeLabel(node,li,icon){
   var mmClickT;
   txt.onclick=function(){if(mmClickT){clearTimeout(mmClickT);mmClickT=null;return;}mmClickT=setTimeout(function(){mmClickT=null;var nd=!node.done;node.done=nd;if(node.children)node.children.forEach(function(c){c.done=nd;});mmSave();mmRender();},220);};
   txt.ondblclick=function(e){if(mmClickT){clearTimeout(mmClickT);mmClickT=null;}e.stopPropagation();txt.style.display='none';inp.style.display='';inp.focus();inp.select();};
-  inp.onblur=function(){node.label=inp.value||'节点';mmSave();txt.textContent=node.label;txt.style.display='';inp.style.display='none';};
+  inp.onblur=function(){clearTimeout(node._lblT);node.label=inp.value||'节点';mmSave();txt.textContent=node.label;txt.style.display='';inp.style.display='none';};
+  inp.oninput=function(){clearTimeout(node._lblT);node._lblT=setTimeout(function(){node.label=inp.value||'节点';mmSave();},800);};
   inp.onkeydown=function(e){if(e.key==='Enter')inp.blur();};
   wrap.appendChild(txt);wrap.appendChild(inp);
   return wrap;
@@ -571,7 +572,8 @@ function mmRender(){
         var ctClickT;
         ctxt.onclick=function(){if(ctClickT){clearTimeout(ctClickT);ctClickT=null;return;}ctClickT=setTimeout(function(){ctClickT=null;c.done=!c.done;var ad=true;for(var k=0;k<p.children.length;k++){if(!p.children[k].done){ad=false;break;}}p.done=ad;mmSave();mmRender();},220);};
         ctxt.ondblclick=function(e){if(ctClickT){clearTimeout(ctClickT);ctClickT=null;}e.stopPropagation();ctxt.style.display='none';cinp.style.display='';cinp.focus();cinp.select();};
-        cinp.onblur=function(){c.label=cinp.value||'节点';mmSave();ctxt.textContent=c.label;ctxt.style.display='';cinp.style.display='none';};
+        cinp.onblur=function(){clearTimeout(c._lblT);c.label=cinp.value||'节点';mmSave();ctxt.textContent=c.label;ctxt.style.display='';cinp.style.display='none';};
+        cinp.oninput=function(){clearTimeout(c._lblT);c._lblT=setTimeout(function(){c.label=cinp.value||'节点';mmSave();},800);};
         cinp.onkeydown=function(e){if(e.key==='Enter')cinp.blur();};
         cwrap.appendChild(ctxt);cwrap.appendChild(cinp);
         cli.appendChild(cwrap);
@@ -641,6 +643,7 @@ function showToast(msg,type){
   clearTimeout(t._hideT);t._hideT=setTimeout(function(){t.style.opacity='0';},2500);
 }
 function syncAll(){
+  document.querySelectorAll('.mm-label-input').forEach(function(el){el.blur();});
   try{
   var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
   var promises=[],count=0;
@@ -659,6 +662,7 @@ function syncAll(){
   }catch(e){console.error('syncAll 错误:',e);showToast('同步出错: '+e.message,'err');document.getElementById('syncBtn').textContent='☁';}
 }
 function downAll(){
+  document.querySelectorAll('.mm-label-input').forEach(function(el){el.blur();});
   if(!confirm('⚠️ 确认从云端下载？这会覆盖本地所有数据！')){return;}
   try{
     document.getElementById('downBtn').textContent='⬇️';
