@@ -2,47 +2,83 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>数据迁移</title>
+<title>数据恢复</title>
 <style>
 body{font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;background:#f5f5f7}
-.box{background:#fff;padding:40px 50px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);text-align:center;max-width:400px}
+.box{background:#fff;padding:40px 50px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);text-align:center;max-width:440px}
 h2{margin:0 0 10px;color:#1d1d1f}
-p{color:#86868b;margin:0 0 24px;line-height:1.5}
+p{color:#86868b;margin:0 0 24px;line-height:1.5;font-size:14px}
 .btn{background:#0066cc;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:15px;cursor:pointer;transition:background .2s}
 .btn:hover{background:#0052a3}
 .btn:disabled{background:#c7c7cc;cursor:not-allowed}
 .status{margin-top:16px;font-size:13px;color:#34c759;min-height:20px}
+ul{text-align:left;color:#86868b;font-size:12px;margin:8px 0 0;padding-left:20px}
 </style>
 </head>
 <body>
 <div class="box">
-<h2>数据迁移</h2>
-<p>点击按钮，将云端备份数据导入到新站点。<br>旧站点数据不受影响。</p>
-<button class="btn" id="btn" onclick="migrate()">开始导入</button>
+<h2>数据恢复</h2>
+<p>恢复日常任务、主线任务、可选任务。<br>已有的收支明细和累计金额不受影响。</p>
+<button class="btn" id="btn" onclick="restore()">开始恢复</button>
 <div class="status" id="status"></div>
+<ul>
+  <li>日常任务：电商(5项) + 创作者(2项确认+10项待补充)</li>
+  <li>主线任务：2项</li>
+  <li>可选任务：10项</li>
+</ul>
 </div>
 <script>
-function migrate(){
+function restore(){
   var btn=document.getElementById('btn'),st=document.getElementById('status');
-  btn.disabled=true;st.textContent='导入中...';
-  localStorage.setItem('zhuye2_mmDate',"2026-06-03");
-  localStorage.setItem('zhuye2_devTasks',JSON.stringify([{"done": false, "text": "外贸（tiktok等）"}, {"done": false, "text": "自媒分成油管（抖音刷视频，素人洗稿+简单有冲击性不说话+悬念配乐）（搜索别人文案和网友辣评 ➕️下面自己标记➕️框和小标记➕️镜像反转）"}, {"done": false, "text": "用ai，做代发？"}]));
-  localStorage.setItem('zhuye2_devDate',"2026-06-03");
-  localStorage.setItem('zhuye2_incomes',JSON.stringify({"2026-05-09": 0.01, "2026-05-10": 0.01, "2026-05-11": 0.01, "2026-05-13": 239, "2026-05-14": 70, "2026-05-18": 12}));
-  localStorage.setItem('zhuye2_password',"");
-  localStorage.setItem('zhuye2_quote',"君子修心  不假于外\n");
-  localStorage.setItem('zhuye2_mtDate',"2026-06-03");
-  localStorage.setItem('zhuye2_devTaskHistory',JSON.stringify({"2026-05-11": [{"text": "用ai，做代发？", "time": "归档"}, {"text": "用ai做代发", "time": "归档"}, {"text": "外贸（tiktok等）", "time": "归档"}, {"text": "自媒分成     油管（抖音刷视频，素人洗稿+简单有冲击性不说话+悬念配乐）（搜索别人文案和网友辣评 ➕️下面自己标记➕️框和小标记➕️镜像反转）", "time": "归档"}], "2026-05-13": [{"text": "用ai做代发", "time": "归档"}], "2026-05-18": [{"text": "wk巴蒂点赞一百了", "time": "归档"}]}));
-  localStorage.setItem('zhuye2_links',JSON.stringify([{"url": "https://v.flomoapp.com/mine?", "name": "笔记"}]));
-  localStorage.setItem('zhuye2_taskHistory',JSON.stringify({"2026-05-09": [{"text": "推进主线", "time": "23:50"}], "2026-05-11": [{"text": "主线", "time": "归档"}, {"text": "主线任务", "time": "归档"}, {"text": "主线任务", "time": "归档"}], "2026-05-12": [{"text": "主线测试", "time": "归档"}]}));
-  localStorage.setItem('zhuye2_profits',JSON.stringify({"2026-05-13": 78, "2026-05-14": 20}));
-  localStorage.setItem('zhuye2_totalProfitAccumulated',"80.30000000000001");
-  localStorage.setItem('zhuye2_totalIncomeAccumulated',"240.60000000000005");
-  localStorage.setItem('zhuye2_mmIncomeHistory',JSON.stringify({"2026-05-12": [{"label": "测试啊", "income": 0, "profit": 0, "children": []}, {"label": "测试", "income": 0, "profit": 0, "children": []}, {"label": "打我", "income": 0, "profit": 0, "children": []}, {"label": "带娃", "income": 0, "profit": 0, "children": []}, {"label": "的", "income": 0, "profit": 0, "children": []}]}));
-  localStorage.setItem('zhuye2_mindmap',JSON.stringify({"children": [{"done": false, "label": "测试啊", "income": 0, "profit": 0, "children": []}, {"done": false, "label": "测试", "income": 0, "profit": 0, "children": []}, {"done": false, "label": "打我", "income": 0, "profit": 0, "children": []}, {"done": false, "label": "带娃", "income": 0, "profit": 0, "children": []}, {"done": false, "label": "的", "income": 0, "profit": 0, "children": []}]}));
-  localStorage.setItem('zhuye2_mainTasks',JSON.stringify([]));
-  st.textContent='导入完成！即将跳转...';
-  setTimeout(function(){window.location.href='https://colin35833-lgtm.github.io/c/';},800);
+  btn.disabled=true;st.textContent='恢复中...';
+
+  // 日常任务（mindmap）
+  localStorage.setItem('zhuye2_mindmap',JSON.stringify({"children": [
+    {"label":"电商","done":false,"income":0,"profit":0,"children":[
+      {"label":"商品维护","done":false,"income":0,"profit":0},
+      {"label":"闲鱼","done":false,"income":0,"profit":0},
+      {"label":"多多","done":false,"income":0,"profit":0},
+      {"label":"抖店","done":false,"income":0,"profit":0},
+      {"label":"备货","done":false,"income":0,"profit":0}
+    ]},
+    {"label":"创作者","done":false,"income":0,"profit":0,"children":[
+      {"label":"各种极速版","done":false,"income":0,"profit":0},
+      {"label":"今日头条","done":false,"income":0,"profit":0,"url":"https://mp.toutiao.com/profile_v4/index"},
+      {"label":"请补充1","done":false,"income":0,"profit":0},
+      {"label":"请补充2","done":false,"income":0,"profit":0},
+      {"label":"请补充3","done":false,"income":0,"profit":0},
+      {"label":"请补充4","done":false,"income":0,"profit":0},
+      {"label":"请补充5","done":false,"income":0,"profit":0},
+      {"label":"请补充6","done":false,"income":0,"profit":0},
+      {"label":"请补充7","done":false,"income":0,"profit":0},
+      {"label":"请补充8","done":false,"income":0,"profit":0},
+      {"label":"请补充9","done":false,"income":0,"profit":0},
+      {"label":"请补充10","done":false,"income":0,"profit":0}
+    ]}
+  ]}));
+
+  // 主线任务
+  localStorage.setItem('zhuye2_mainTasks',JSON.stringify([
+    {"done":false,"text":"文字创作者（先开发），图文创作者，视频创作者，长视频创作者"},
+    {"done":false,"text":"花笺加bilibili视频博客计划"}
+  ]));
+
+  // 可选任务
+  localStorage.setItem('zhuye2_devTasks',JSON.stringify([
+    {"done":false,"text":"开辟肯定要开大而长期的增长，显然是ai相关（wk巴蒂电子一百多了）（追热点）（做本职）"},
+    {"done":false,"text":"横向测款，竖向种树"},
+    {"done":false,"text":"拼多多用erp  抖店用一淘，有空再说开发的事"},
+    {"done":false,"text":"小红书闲鱼卖ai相关的东西"},
+    {"done":false,"text":"给想赚钱的人，创作者日报，或者生活妙招？"},
+    {"done":false,"text":"用ai，做代发"},
+    {"done":false,"text":"自媒分成 油管（抖音刷视频，素人洗稿+简单有冲击性不说话+悬念配乐）（搜索别人文案和网友辣评 ➕️下面自己标记➕️框和小标记➕️镜像反转）"},
+    {"done":false,"text":"外贸（tiktok等）"},
+    {"done":false,"text":"要钱，拆弹"},
+    {"done":false,"text":"个人分享？赚钱？算账？"}
+  ]));
+
+  st.textContent='恢复完成！即将跳转到主页...';
+  setTimeout(function(){window.location.href='https://colin35833-lgtm.github.io/c/';},1000);
 }
 </script>
 </body>
