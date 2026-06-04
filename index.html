@@ -596,7 +596,7 @@ function mmRender(){
         prfInp.oninput=function(){clearTimeout(c._prfT);c._prfT=setTimeout(function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();calcDailyIncome();},300);};
         prfInp.onblur=function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();};
         prfInp.onkeydown=function(e){if(e.key==='Enter')prfInp.blur();};
-        cli.appendChild(prfInp);}
+        cli.appendChild(prfInp);
         var clb=document.createElement('button');clb.className='mm-link-set';clb.textContent='🔗';clb.title=c.url?'修改链接':'添加链接';clb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',c.url||'');if(u===null)return;c.url=u?u:undefined;mmSave();mmRender();calcDailyIncome();};
         cli.appendChild(clb);
         var cd=document.createElement('button');cd.className='mm-del';cd.textContent='✕';cd.onclick=function(){p.children.splice(j,1);mmSave();mmRender();calcDailyIncome();};
