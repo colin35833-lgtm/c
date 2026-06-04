@@ -644,8 +644,10 @@ function showToast(msg,type){
   clearTimeout(t._hideT);t._hideT=setTimeout(function(){t.style.opacity='0';},2500);
 }
 function syncAll(){
-  var ks=['password','mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
+  var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
   var promises=[],count=0;
+  var pwd=localStorage.getItem(PK);
+  if(pwd){count++;promises.push(sd('password',pwd,{immediate:true}));}
   ks.forEach(function(k){var d=ld(k,null);if(d!==null){count++;promises.push(sd(k,d,{immediate:true}));}});
   if(!count){showToast('无数据需要同步','info');return;}
   document.getElementById('syncBtn').textContent='☁️';
