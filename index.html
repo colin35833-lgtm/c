@@ -283,7 +283,8 @@ function _doSync(k,b){
 function sd(k,d,opts){
   opts=opts||{};
   localStorage.setItem('zhuye2_'+k,JSON.stringify(d));
-  var bodyObj={id:k,data:_enc(d,ld('password','')),updated_at:new Date().toISOString()};
+  var pwd=ld('password','');
+  var bodyObj={id:k,data:(k==='password'?d:_enc(d,pwd)),updated_at:new Date().toISOString()};
   var b=JSON.stringify(bodyObj);
   if(opts.immediate){return _doSync(k,b);}
   _syncBody[k]=b;
@@ -297,12 +298,15 @@ function ld(k,d){try{var v=localStorage.getItem('zhuye2_'+k);return v?JSON.parse
 function gtk(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.length;i++){if(str[i]==='('||str[i]==='（'){d++;continue;}if(str[i]===')'||str[i]==='）'){d--;continue;}if(d===0)r+=str[i];}return r.replace(/\s+/g,' ').trim();}
 
-// 首次打开从云端拉取（只补充本地没有的）
+// 首次打开从云端拉取（先拉密码，再用密码解密其他数据）
 (function(){if(sessionStorage.getItem('zhuye2_synced'))return;
   fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq'}})
   .then(function(r){return r.json();}).then(function(rows){
-    var hasData=false;
-    if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,ld('password',''));if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}else{var dec=_dec(row.data,ld('password',''));if(dec!==null&&JSON.stringify(dec)!==localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
+    var hasData=false,pwd=ld('password','');
+    // 先拉密码（明文存储）
+    if(rows&&rows.length){rows.forEach(function(row){if(row.id==='password'&&row.data){if(!localStorage.getItem(PK)){localStorage.setItem(PK,JSON.stringify(row.data));pwd=row.data;}}});}
+    // 再解密其他数据
+    if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}else{var dec=_dec(row.data,pwd);if(dec!==null&&JSON.stringify(dec)!==localStorage.getItem(lk)){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
     if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
     sessionStorage.setItem('zhuye2_synced','1');
     if(!localStorage.getItem(PK)){location.reload();}
@@ -632,7 +636,7 @@ function showToast(msg,type){
   clearTimeout(t._hideT);t._hideT=setTimeout(function(){t.style.opacity='0';},2500);
 }
 function syncAll(){
-  var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
+  var ks=['password','mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
   var promises=[],count=0;
   ks.forEach(function(k){var d=ld(k,null);if(d!==null){count++;promises.push(sd(k,d,{immediate:true}));}});
   if(!count){showToast('无数据需要同步','info');return;}
