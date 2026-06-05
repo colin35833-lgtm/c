@@ -190,16 +190,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     </div>
   </div>
   <div class="card" style="margin-bottom:16px">
-    <div class="card-title"><span class="icon" style="background:#34c759">◆</span>利润</div>
+    <div class="card-title"><span class="icon" style="background:#0066cc">¥</span>利润</div>
     <div style="font-size:12px;color:#86868b;margin-bottom:12px"><span id="dateDisplay"></span></div>
     <div class="income-grid" style="grid-template-columns:1fr 1fr">
       <div class="income-item">
         <div class="income-label">总利润</div>
-        <div class="income-value"><span class="symbol" style="color:#34c759">◆</span><span id="totalProfit">0.00</span></div>
+        <div class="income-value"><span class="symbol" style="color:#0066cc">¥</span><span id="totalProfit">0.00</span></div>
       </div>
       <div class="income-item">
         <div class="income-label">日净利润</div>
-        <div class="income-value"><span class="symbol" style="color:#34c759">◆</span><span id="dailyProfit" class="income-static">0.00</span></div>
+        <div class="income-value"><span class="symbol" style="color:#0066cc">¥</span><span id="dailyProfit" class="income-static">0.00</span></div>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:#86868b">
@@ -221,7 +221,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
       <div class="card-title"><span class="icon" style="background:#7c3aed">◉</span>日常任务</div>
       <div class="mm-toolbar">
         <button class="mm-p" onclick="mmAddParent()">+ 添加</button>
-        <span style="font-size:11px;color:#c7c7cc">▶ 展开/收起 · 点击圆圈完成 · 子任务填收入自动完成</span>
+        <span style="font-size:11px;color:#c7c7cc">▶ 展开/收起 · 点击圆圈完成 · 子任务填利润自动完成</span>
       </div>
       <ul class="mm-list" id="mmList">
         <li class="mm-empty">添加一些日常任务吧</li>
@@ -383,15 +383,14 @@ ud();
 
 function calcDailyIncome(){
   var mm=ld('mindmap',{children:[]});
-  var totalInc=0,totalPrf=0;
+  var totalPrf=0;
   if(mm.children){mm.children.forEach(function(p){
     if(p.children){p.children.forEach(function(c){
-      totalInc+=parseFloat(c.income)||0;
       totalPrf+=parseFloat(c.profit)||0;
     });}
   });}
   document.getElementById('dailyProfit').textContent=totalPrf.toFixed(2);
-  return {income:totalInc,profit:totalPrf};
+  return {profit:totalPrf};
 }
 
 function pct(){var t=parseFloat(ld('totalProfitAccumulated',0))||0;document.getElementById('totalProfit').textContent=t.toFixed(2);}
@@ -406,29 +405,29 @@ function toggleIncHist(){
   t.textContent='收起明细';
   var hist=ld('mmIncomeHistory',{}),dates=Object.keys(hist).sort().reverse(),html='';
   if(!dates.length){p.innerHTML='<div style="color:#c7c7cc;font-size:12px;padding:10px;text-align:center">暂无记录</div>';p.style.display='';return;}
-  var grandInc=0,grandPrf=0;
+  var grandPrf=0;
   dates.forEach(function(d){
-    var day=hist[d],dayInc=0,dayPrf=0;
+    var day=hist[d],dayPrf=0;
     var dayHtml='';
     day.forEach(function(cat){
-      var catInc=cat.income||0,catPrf=cat.profit||0;
-      dayInc+=catInc;dayPrf+=catPrf;
+      var catPrf=cat.profit||0;
+      dayPrf+=catPrf;
       var childHtml='';
       if(cat.children&&cat.children.length){
         cat.children.forEach(function(ch){
-          var chInc=parseFloat(ch.income)||0,chPrf=parseFloat(ch.profit)||0;
-          if(chInc||chPrf){
-            childHtml+='<span style="display:inline-flex;align-items:baseline;gap:2px;padding:1px 5px;background:#f0f0f2;border-radius:3px;margin-right:3px;font-size:10px"><span style="color:#86868b;min-width:32px">'+stripComment(ch.label)+'</span><span style="color:#0066cc;font-variant-numeric:tabular-nums">¥'+chInc.toFixed(0)+'</span><span style="color:#34c759;font-variant-numeric:tabular-nums">◆'+chPrf.toFixed(0)+'</span></span>';
+          var chPrf=parseFloat(ch.profit)||0;
+          if(chPrf){
+            childHtml+='<span style="display:inline-flex;align-items:baseline;gap:2px;padding:1px 5px;background:#f0f0f2;border-radius:3px;margin-right:3px;font-size:10px"><span style="color:#86868b;min-width:32px">'+stripComment(ch.label)+'</span><span style="color:#0066cc;font-variant-numeric:tabular-nums">¥'+chPrf.toFixed(0)+'</span></span>';
           }
         });
       }
       var catLabel=stripComment(cat.label);
-      dayHtml+='<span style="display:inline-flex;align-items:baseline;gap:4px;min-width:210px;padding:2px 6px"><span style="font-weight:700;color:#1d1d1f;font-size:13px;min-width:55px">'+catLabel+'</span><span style="color:#0066cc;font-size:12px;min-width:50px;text-align:right;font-variant-numeric:tabular-nums">¥'+catInc.toFixed(0)+'</span><span style="color:#34c759;font-size:12px;min-width:50px;text-align:right;font-variant-numeric:tabular-nums">◆'+catPrf.toFixed(0)+'</span>'+(childHtml?'<span style="color:#c7c7cc;font-size:11px;margin:0 3px">{</span>'+childHtml+'<span style="color:#c7c7cc;font-size:11px;margin-left:3px">}</span>':'')+'</span>';
+      dayHtml+='<span style="display:inline-flex;align-items:baseline;gap:4px;min-width:210px;padding:2px 6px"><span style="font-weight:700;color:#1d1d1f;font-size:13px;min-width:55px">'+catLabel+'</span><span style="color:#0066cc;font-size:12px;min-width:50px;text-align:right;font-variant-numeric:tabular-nums">¥'+catPrf.toFixed(0)+'</span>'+(childHtml?'<span style="color:#c7c7cc;font-size:11px;margin:0 3px">{</span>'+childHtml+'<span style="color:#c7c7cc;font-size:11px;margin-left:3px">}</span>':'')+'</span>';
     });
-    grandInc+=dayInc;grandPrf+=dayPrf;
+    grandPrf+=dayPrf;
     html+='<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 10px;background:#fafafa;border-radius:6px;margin-bottom:3px;font-size:12px;flex-wrap:wrap"><span style="color:#86868b;font-size:11px;white-space:nowrap;flex:0 0 75px;text-align:right;padding-top:2px">'+d+'</span>'+dayHtml+'</div>';
   });
-  html+='<div style="display:flex;align-items:center;gap:8px;padding:5px 10px;background:#e6f1fb;border-radius:6px;margin-top:4px;font-size:12px;font-weight:600"><span style="color:#86868b;flex:0 0 75px;text-align:right">合计</span><span style="color:#0066cc">¥ '+grandInc.toFixed(2)+'</span><span style="color:#34c759">◆ '+grandPrf.toFixed(2)+'</span></div>';
+  html+='<div style="display:flex;align-items:center;gap:8px;padding:5px 10px;background:#e6f1fb;border-radius:6px;margin-top:4px;font-size:12px;font-weight:600"><span style="color:#86868b;flex:0 0 75px;text-align:right">合计</span><span style="color:#0066cc">¥ '+grandPrf.toFixed(2)+'</span></div>';
   p.innerHTML=html;p.style.display='';
 }
 
@@ -472,11 +471,11 @@ function runDailyReset(){
       if(mmData&&mmData.children&&mmData.children.length){
         var archive=[];
         mmData.children.forEach(function(p){
-          var cat={label:stripComment(p.label),income:0,profit:0,children:[]};
+          var cat={label:stripComment(p.label),profit:0,children:[]};
           if(p.children){
             p.children.forEach(function(c){
-              var ci=parseFloat(c.income)||0,cp=parseFloat(c.profit)||0;
-              if(ci||cp){cat.income+=ci;cat.profit+=cp;cat.children.push({label:stripComment(c.label),income:ci,profit:cp});}
+              var cp=parseFloat(c.profit)||0;
+              if(cp){cat.profit+=cp;cat.children.push({label:stripComment(c.label),profit:cp});}
             });
           }
           archive.push(cat);
@@ -488,14 +487,12 @@ function runDailyReset(){
         }
       }
     }
-    // 累加到总营收/总利润
+    // 累加到总利润
     var dayTotal=calcDailyIncome();
-    if(dayTotal.income||dayTotal.profit){
-      var accInc=parseFloat(ld('totalIncomeAccumulated',0))||0;
+    if(dayTotal.profit){
       var accPrf=parseFloat(ld('totalProfitAccumulated',0))||0;
-      sd('totalIncomeAccumulated',accInc+dayTotal.income);
       sd('totalProfitAccumulated',accPrf+dayTotal.profit);
-      ct();pct();
+      pct();
     }
     // 重置状态
     var mmData=ld('mindmap',null);
@@ -574,17 +571,10 @@ function mmRender(){
 
         if(c.url){var cua=document.createElement('a');cua.className='mm-url';cua.href=c.url;cua.target='_blank';cua.rel='noopener noreferrer';cua.textContent='↗ 打开';cua.onclick=function(ev){ev.stopPropagation();};cli.appendChild(cua);}
 
-        // 收入输入
-        var incInp=document.createElement('input');incInp.className='mm-income-input';incInp.placeholder='¥';incInp.value=(c.income?c.income:'');
-        incInp.oninput=function(){clearTimeout(c._incT);c._incT=setTimeout(function(){var v=parseFloat(incInp.value)||0;c.income=v;if(v>0||parseFloat(c.profit||0)>0){c.done=true;}mmSave();calcDailyIncome();},300);};
-        incInp.onblur=function(){var v=parseFloat(incInp.value)||0;c.income=v;if(v>0||parseFloat(c.profit||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();};
-        incInp.onkeydown=function(e){if(e.key==='Enter')incInp.blur();};
-        cli.appendChild(incInp);
-
         // 利润输入
-        var prfInp=document.createElement('input');prfInp.className='mm-profit-input';prfInp.placeholder='◆';prfInp.value=(c.profit?c.profit:'');
-        prfInp.oninput=function(){clearTimeout(c._prfT);c._prfT=setTimeout(function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();calcDailyIncome();},300);};
-        prfInp.onblur=function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0||parseFloat(c.income||0)>0){c.done=true;}mmSave();mmRender();calcDailyIncome();};
+        var prfInp=document.createElement('input');prfInp.className='mm-profit-input';prfInp.placeholder='¥';prfInp.value=(c.profit?c.profit:'');
+        prfInp.oninput=function(){clearTimeout(c._prfT);c._prfT=setTimeout(function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0){c.done=true;}mmSave();calcDailyIncome();},300);};
+        prfInp.onblur=function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0){c.done=true;}mmSave();mmRender();calcDailyIncome();};
         prfInp.onkeydown=function(e){if(e.key==='Enter')prfInp.blur();};
         cli.appendChild(prfInp);
         var clb=document.createElement('button');clb.className='mm-link-set';clb.textContent='🔗';clb.title=c.url?'修改链接':'添加链接';clb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',c.url||'');if(u===null)return;c.url=u?u:undefined;mmSave();mmRender();calcDailyIncome();};
@@ -639,7 +629,7 @@ function showToast(msg,type){
 function syncAll(){
   document.querySelectorAll('.mm-label-input').forEach(function(el){el.blur();});
   try{
-  var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalIncomeAccumulated','totalProfitAccumulated'];
+  var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalProfitAccumulated'];
   var promises=[],count=0;
   var pwd=localStorage.getItem(PK);
   if(pwd){count++;promises.push(sd('password',pwd,{push:true}));}
