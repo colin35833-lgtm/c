@@ -99,8 +99,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .mm-empty{display:flex;align-items:center;justify-content:center;color:#c7c7cc;font-size:13px;min-height:100px}
 
 .mm-income-input,.mm-profit-input{width:55px;padding:3px 5px;border:1px solid #d2d2d7;border-radius:5px;font-size:11px;outline:none;text-align:right;transition:border-color .2s;background:#fff}
-.mm-profit-input::-webkit-outer-spin-button,.mm-profit-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.mm-profit-input[type=number]{-moz-appearance:textfield}
 .mm-income-input:focus,.mm-profit-input:focus{border-color:#0066cc}
 .mm-income-input::placeholder,.mm-profit-input::placeholder{color:#c7c7cc}
 
@@ -574,7 +572,7 @@ function mmRender(){
         if(c.url){var cua=document.createElement('a');cua.className='mm-url';cua.href=c.url;cua.target='_blank';cua.rel='noopener noreferrer';cua.textContent='↗ 打开';cua.onclick=function(ev){ev.stopPropagation();};cli.appendChild(cua);}
 
         // 利润输入
-        var prfInp=document.createElement('input');prfInp.type='number';prfInp.step='0.01';prfInp.className='mm-profit-input';prfInp.placeholder='¥';prfInp.value=(c.profit?c.profit:'');
+        var prfInp=document.createElement('input');prfInp.className='mm-profit-input';prfInp.placeholder='¥';prfInp.inputMode='decimal';prfInp.value=(c.profit?c.profit:'');
         prfInp.oninput=function(){clearTimeout(c._prfT);c._prfT=setTimeout(function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0){c.done=true;}mmSave();calcDailyIncome();},300);};
         prfInp.onblur=function(){var v=parseFloat(prfInp.value)||0;c.profit=v;if(v>0){c.done=true;}mmSave();mmRender();calcDailyIncome();};
         prfInp.onkeydown=function(e){if(e.key==='Enter')prfInp.blur();};
