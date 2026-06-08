@@ -46,24 +46,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
 .task-list li .del-btn:hover{color:#a32d2d;background:#fcebeb}
 #devTaskList .pending{background:#fafafa}
 #devTaskList .pending:hover{background:#f0f0f2}
-.link-input-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
-.link-input-row input{padding:6px 10px;border:1px solid #d2d2d7;border-radius:6px;font-size:12px;outline:none}
-.link-input-row input:focus{border-color:#34c759}
-.link-input-row .link-name-input{flex:1;min-width:80px}
-.link-input-row .link-url-input{flex:2;min-width:120px}
-.link-input-row button{padding:6px 12px;background:#34c759;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap;transition:background .2s}
-.link-input-row button:hover{background:#2db84d}
-.link-list{list-style:none;flex:1;overflow-y:auto}
-.link-list li{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:3px;background:#fafafa;transition:all .15s;font-size:13px}
-.link-list li:hover{background:#f0f0f2}
-.link-list li .link-badge{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;background:#ebf9f0;color:#1d9e75;flex-shrink:0;font-weight:500}
-.link-list li .link-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:#1d1d1f;flex:0 0 45%}
-.link-list li .link-url-text{font-size:13px;font-weight:500;color:#0066cc;text-decoration:none;padding:3px 10px;border-radius:6px;transition:background .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 0 40%;text-align:left}
-.link-list li .link-url-text:hover{background:#e6f1fb;text-decoration:underline}
-.link-list li .link-del{width:22px;height:22px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;border-radius:4px;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:0;transition:opacity .2s,color .2s}
-.link-list li:hover .link-del{opacity:1}
-.link-list li .link-del:hover{color:#a32d2d;background:#fcebeb}
-.link-empty{display:flex;align-items:center;justify-content:center;flex:1;color:#c7c7cc;font-size:13px;min-height:120px}
 
 .mm-toolbar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 .mm-toolbar button{padding:5px 12px;border:1px solid #d2d2d7;border-radius:7px;font-size:12px;cursor:pointer;background:#fff;color:#1d1d1f;transition:all .15s}
@@ -245,17 +227,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
         <ul class="task-list" id="devTaskList"></ul>
       </div>
     </div>
-  </div>
-  <div class="card" style="margin-top:16px">
-    <div class="card-title"><span class="icon" style="background:#c9208a">○</span>待开发</div>
-    <div class="link-input-row">
-      <input type="text" class="link-name-input" id="linkNameInput" placeholder="名称（如 淘宝后台）">
-      <input type="text" class="link-url-input" id="linkUrlInput" placeholder="网址链接">
-      <button type="button" onclick="al()">添加</button>
-    </div>
-    <ul class="link-list" id="linkList">
-      <li class="link-empty" id="linkEmpty">添加一些常用网址吧</li>
-    </ul>
   </div>
 </div>
 <script>
@@ -593,30 +564,6 @@ function mmRender(){
 function mmAddParent(){if(!mmData.children)mmData.children=[];mmData.children.push({label:'分类',done:false,income:0,profit:0,children:[]});mmSave();mmRender();}
 mmRender();
 
-// ===================== 可选任务（链接） =====================
-function rl(){
-  var l=document.getElementById('linkList'),ls=ld('links',[]);l.innerHTML='';
-  if(!ls.length){var e=document.createElement('li');e.className='link-empty';e.textContent='添加一些常用网址吧';l.appendChild(e);return;}
-  var cs=[{bg:'#ebf9f0',fg:'#1d9e75'},{bg:'#e6f1fb',fg:'#185fa5'},{bg:'#faeeda',fg:'#854f0b'},{bg:'#f5f3ff',fg:'#534ab7'},{bg:'#fbeaf0',fg:'#993556'},{bg:'#fcebeb',fg:'#a32d2d'}];
-  ls.forEach(function(li,i){
-    var el=document.createElement('li');
-    var b=document.createElement('span');b.className='link-badge';b.style.background=cs[i%cs.length].bg;b.style.color=cs[i%cs.length].fg;b.textContent=li.name.charAt(0).toUpperCase();
-    var n=document.createElement('span');n.className='link-name';n.textContent=li.name;
-    var u=document.createElement('a');u.className='link-url-text';u.href=li.url;u.target='_blank';u.rel='noopener noreferrer';u.textContent='↗ '+li.url;
-    var d=document.createElement('button');d.className='link-del';d.textContent='✕';d.onclick=function(e){e.stopPropagation();ls.splice(i,1);sd('links',ls);rl();};
-    el.appendChild(b);el.appendChild(n);el.appendChild(u);el.appendChild(d);l.appendChild(el);
-  });
-}
-function al(){
-  var n=document.getElementById('linkNameInput').value.trim(),u=document.getElementById('linkUrlInput').value.trim();
-  if(!n||!u)return;if(!u.startsWith('http://')&&!u.startsWith('https://'))u='https://'+u;
-  var ls=ld('links',[]);ls.push({name:n,url:u});sd('links',ls);rl();
-  document.getElementById('linkNameInput').value='';document.getElementById('linkUrlInput').value='';document.getElementById('linkNameInput').focus();
-}
-document.getElementById('linkUrlInput').addEventListener('keydown',function(e){if(e.key==='Enter')al();});
-document.getElementById('linkNameInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('linkUrlInput').focus();});
-rl();
-
 // ===================== 手动同步按钮 =====================
 function showToast(msg,type){
   type=type||'info';
@@ -629,7 +576,7 @@ function showToast(msg,type){
 function syncAll(){
   document.querySelectorAll('.mm-label-input').forEach(function(el){el.blur();});
   try{
-  var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','links','mmIncomeHistory','totalProfitAccumulated'];
+  var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','mmIncomeHistory','totalProfitAccumulated'];
   var promises=[],count=0;
   var pwd=localStorage.getItem(PK);
   if(pwd){count++;promises.push(sd('password',pwd,{push:true}));}
