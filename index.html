@@ -488,7 +488,7 @@ runDevTaskArchive();
 var mmData=ld('mindmap',{children:[{label:'电商',done:false,income:0,profit:0,children:[{label:'多多',done:false,income:0,profit:0},{label:'抖店',done:false,income:0,profit:0},{label:'淘宝',done:false,income:0,profit:0}]},{label:'自媒体',done:false,income:0,profit:0,children:[{label:'小红书',done:false,income:0,profit:0},{label:'抖音',done:false,income:0,profit:0},{label:'B站',done:false,income:0,profit:0}]},{label:'个人',done:false,income:0,profit:0,children:[{label:'学习',done:false,income:0,profit:0},{label:'复盘',done:false,income:0,profit:0}]}]});
 
 var mmOpen={};
-function mmSave(){var clean=JSON.parse(JSON.stringify(mmData));function strip(o){if(!o||typeof o!=='object')return;Object.keys(o).forEach(function(k){if(k==='_incT'||k==='_prfT'||k==='ctClickT'||k==='mmClickT'||k==='_lblT')delete o[k];if(o[k]&&typeof o[k]==='object')strip(o[k]);});}strip(clean);sd('mindmap',clean);mmData=JSON.parse(JSON.stringify(clean));}
+function mmSave(){var clean=JSON.parse(JSON.stringify(mmData));function strip(o){if(!o||typeof o!=='object')return;Object.keys(o).forEach(function(k){if(k==='_incT'||k==='_prfT'||k==='ctClickT'||k==='mmClickT'||k==='_lblT')delete o[k];if(o[k]&&typeof o[k]==='object')strip(o[k]);});}strip(clean);sd('mindmap',clean);}
 function mmMakeLabel(node,li,icon){
   var wrap=document.createElement('span');wrap.style.cssText='flex:1;display:flex;align-items:center;min-width:0';
   var txt=document.createElement('span');txt.className='mm-label';txt.textContent=node.label;
