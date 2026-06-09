@@ -497,16 +497,18 @@ function mmMakeLabel(node,li,icon){
   var mmClickT;
   txt.onclick=function(){if(mmClickT){clearTimeout(mmClickT);mmClickT=null;return;}mmClickT=setTimeout(function(){mmClickT=null;var nd=!node.done;node.done=nd;if(node.children)node.children.forEach(function(c){c.done=nd;});mmSave();mmRender();},220);};
   txt.ondblclick=function(e){if(mmClickT){clearTimeout(mmClickT);mmClickT=null;}e.stopPropagation();txt.style.display='none';inp.style.display='';inp.focus();inp.select();};
-  inp.onblur=function(){clearTimeout(node._lblT);node.label=inp.value||'节点';mmSave();txt.textContent=node.label;txt.style.display='';inp.style.display='none';};
+  inp.onblur=function(){clearTimeout(node._lblT);node.label=inp.value||'节点';mmSave();mmRender();};
   inp.oninput=function(){clearTimeout(node._lblT);node._lblT=setTimeout(function(){node.label=inp.value||'节点';mmSave();},800);};
   inp.onkeydown=function(e){if(e.key==='Enter')inp.blur();};
   wrap.appendChild(txt);wrap.appendChild(inp);
   return wrap;
 }
 function mmRender(){
+  if(window._mmRendering)return;window._mmRendering=true;
+  try{
   var edits=document.querySelectorAll('.mm-label-input');for(var ei=0;ei<edits.length;ei++){edits[ei].blur();}
   var list=document.getElementById('mmList');list.innerHTML='';
-  if(!mmData.children||!mmData.children.length){var e=document.createElement('li');e.className='mm-empty';e.textContent='添加一些日常任务吧';list.appendChild(e);return;}
+  if(!mmData.children||!mmData.children.length){var e=document.createElement('li');e.className='mm-empty';e.textContent='添加一些日常任务吧';list.appendChild(e);window._mmRendering=false;return;}
   mmData.children.forEach(function(p,i){
     var li=document.createElement('li');li.className='mm-parent'+(p.done?' done':'');
     var arrow=document.createElement('button');arrow.className='mm-arrow'+(mmOpen[i]?' open':'');arrow.textContent='▶';arrow.onclick=function(){mmOpen[i]=!mmOpen[i];mmRender();};
@@ -534,7 +536,7 @@ function mmRender(){
         var ctClickT;
         ctxt.onclick=function(){if(ctClickT){clearTimeout(ctClickT);ctClickT=null;return;}ctClickT=setTimeout(function(){ctClickT=null;c.done=!c.done;var ad=true;for(var k=0;k<p.children.length;k++){if(!p.children[k].done){ad=false;break;}}p.done=ad;mmSave();mmRender();},220);};
         ctxt.ondblclick=function(e){if(ctClickT){clearTimeout(ctClickT);ctClickT=null;}e.stopPropagation();ctxt.style.display='none';cinp.style.display='';cinp.focus();cinp.select();};
-        cinp.onblur=function(){clearTimeout(c._lblT);c.label=cinp.value||'节点';mmSave();ctxt.textContent=c.label;ctxt.style.display='';cinp.style.display='none';};
+        cinp.onblur=function(){clearTimeout(c._lblT);c.label=cinp.value||'节点';mmSave();mmRender();};
         cinp.oninput=function(){clearTimeout(c._lblT);c._lblT=setTimeout(function(){c.label=cinp.value||'节点';mmSave();},800);};
         cinp.onkeydown=function(e){if(e.key==='Enter')cinp.blur();};
         cwrap.appendChild(ctxt);cwrap.appendChild(cinp);
@@ -560,6 +562,8 @@ function mmRender(){
   });
   enableDragSort(list,function(){return mmData.children;},function(d,oldD){mmData.children=d;if(oldD){var newOpen={};d.forEach(function(c,ni){var oi=oldD.indexOf(c);if(mmOpen[oi])newOpen[ni]=true;});mmOpen=newOpen;}mmSave();},mmRender,':scope > li.mm-parent');
   calcDailyIncome();
+  }catch(e){console.error('mmRender error:',e);}
+  window._mmRendering=false;
 }
 function mmAddParent(){if(!mmData.children)mmData.children=[];mmData.children.push({label:'分类',done:false,income:0,profit:0,children:[]});mmSave();mmRender();}
 mmRender();
