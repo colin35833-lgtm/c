@@ -581,6 +581,9 @@ function syncAll(){
   document.querySelectorAll('.mm-label-input').forEach(function(el){el.blur();});
   try{
   var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','mmIncomeHistory','totalProfitAccumulated'];
+  var hd={'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
+  // 先清理云端旧key（已废弃的totalIncomeAccumulated、links等），避免下载时数量对不上
+  fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data?id=not.in.('+ks.concat(['password']).join(',')+')',{method:'DELETE',headers:{'apikey':hd['apikey'],'Authorization':hd['Authorization'],'Prefer':'return=minimal'}}).catch(function(){});
   var promises=[],count=0;
   var pwd=localStorage.getItem(PK);
   if(pwd){count++;promises.push(sd('password',pwd,{push:true}));}
