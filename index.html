@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-  <meta name="version" content="1.9.1">
+  <meta name="version" content="1.10">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>工作主页</title>
 <style>
@@ -189,14 +189,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
       <a id="incHistToggle" style="color:#0066cc;cursor:pointer;text-decoration:none" onclick="toggleIncHist()">查看收支明细</a>
     </div>
     <div id="incHistPanel" style="display:none;margin-top:8px;max-height:200px;overflow-y:auto"></div>
-    <div style="margin-top:10px;border-top:0.5px solid rgba(0,0,0,.06);padding-top:10px">
-      <div style="display:flex;align-items:center;gap:10px;font-size:12px">
-        <span style="color:#86868b">📋</span>
-        <a id="histToggle" style="color:#0066cc;cursor:pointer;text-decoration:none" onclick="toggleHist()">查看历史完成</a>
-        <span style="color:#c7c7cc;font-size:11px">（主线任务完成后自动归档）</span>
-      </div>
-      <div id="histPanel" style="display:none;margin-top:8px;max-height:200px;overflow-y:auto"></div>
-    </div>
   </div>
   <div class="task-row">
     <div class="card" style="display:flex;flex-direction:column">
@@ -210,14 +202,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
       </ul>
     </div>
     <div class="task-col">
-      <div class="card" style="flex:1">
-        <div class="card-title"><span class="icon" style="background:#e68a00">★</span>主线任务</div>
-        <div class="task-input-row">
-          <input type="text" id="mainTaskInput" placeholder="输入新任务，回车添加...">
-          <button type="button" onclick="amt()">添加</button>
-        </div>
-        <ul class="task-list" id="mainTaskList"></ul>
-      </div>
       <div class="card" style="flex:1;display:flex;flex-direction:column">
         <div class="card-title"><span class="icon" style="background:#34c759"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 2L2 12l10 10 10-10L12 2z"/></svg></span>可选任务</div>
         <div class="task-input-row">
@@ -270,7 +254,7 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
 // 首次打开从云端拉取（先拉密码，再用密码解密其他数据）
 (function(){if(sessionStorage.getItem('zhuye2_synced'))return;
   var syncDone=false;
-  function finish(){if(syncDone)return;syncDone=true;sessionStorage.setItem('zhuye2_synced','1');runDailyReset();runMainTaskArchive();runDevTaskArchive();cl();}
+  function finish(){if(syncDone)return;syncDone=true;sessionStorage.setItem('zhuye2_synced','1');runDailyReset();cl();}
   setTimeout(finish,5000);
   fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data',{headers:{'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq'}})
   .then(function(r){return r.json();}).then(function(rows){
@@ -279,7 +263,7 @@ function stripComment(str){if(!str)return'';var r='',d=0;for(var i=0;i<str.lengt
     if(rows&&rows.length){rows.forEach(function(row){if(row.id==='password'&&row.data&&row.data!==''){if(!localStorage.getItem(PK)){localStorage.setItem(PK,row.data);pwd=row.data;}}});}
     // 再解密其他数据（仅补充本地没有的，绝不覆盖）
     if(rows&&rows.length){rows.forEach(function(row){if(row.id&&row.id!=='password'&&row.data){var lk='zhuye2_'+row.id;if(!localStorage.getItem(lk)){var dec=_dec(row.data,pwd);if(dec!==null){localStorage.setItem(lk,JSON.stringify(dec));hasData=true;}}}});}
-    if(hasData){runDailyReset();runMainTaskArchive();runDevTaskArchive();}
+    if(hasData){runDailyReset();}
     finish();
   }).catch(function(){finish();});
 })();
@@ -402,35 +386,10 @@ function toggleIncHist(){
   p.innerHTML=html;p.style.display='';
 }
 
-// ===================== 主线任务（次日自动归档） =====================
-function runMainTaskArchive(){var ld_=ld('mtDate',''),td_=gtk();if(ld_!==td_){var ts_=ld('mainTasks',[]),done_=[];for(var i_=ts_.length-1;i_>=0;i_--){if(ts_[i_].done){done_.push(ts_[i_]);ts_.splice(i_,1);}}if(done_.length&&ld_){var h_=ld('taskHistory',{});if(!h_[ld_])h_[ld_]=[];done_.forEach(function(t){h_[ld_].push({text:t.text,time:'归档'});});sd('taskHistory',h_);}sd('mainTasks',ts_);sd('mtDate',td_);}}
-function rmt(){var l=document.getElementById('mainTaskList'),t=ld('mainTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('mainTasks',t);rmt();};li.appendChild(ic);li.appendChild(sp);if(e.url){var ua=document.createElement('a');ua.className='task-url';ua.href=e.url;ua.target='_blank';ua.rel='noopener noreferrer';ua.textContent='↗';ua.onclick=function(ev){ev.stopPropagation();};li.appendChild(ua);}var lb=document.createElement('button');lb.className='link-set';lb.textContent='🔗';lb.title=e.url?'修改链接':'添加链接';lb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',e.url||'');if(u===null)return;e.url=u?u:undefined;sd('mainTasks',t);rmt();};li.appendChild(lb);var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('mainTasks',t);rmt();};li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('mainTasks',[]);},function(d){sd('mainTasks',d);},rmt);}
-function amt(){var i=document.getElementById('mainTaskInput'),t=i.value.trim();if(!t)return;var ts=ld('mainTasks',[]);ts.push({text:t,done:false});sd('mainTasks',ts);rmt();i.value='';i.focus();}
-document.getElementById('mainTaskInput').addEventListener('keydown',function(e){if(e.key==='Enter')amt();});rmt();
-
-// ===================== 可选任务（次日自动归档） =====================
-function runDevTaskArchive(){var dd_=ld('devDate',''),td_=gtk();if(dd_!==td_){var ds_=ld('devTasks',[]),done_=[];for(var di_=ds_.length-1;di_>=0;di_--){if(ds_[di_].done){done_.push(ds_[di_]);ds_.splice(di_,1);}}if(done_.length&&dd_){var dh_=ld('devTaskHistory',{});if(!dh_[dd_])dh_[dd_]=[];done_.forEach(function(t){dh_[dd_].push({text:t.text,time:'归档'});});sd('devTaskHistory',dh_);}sd('devTasks',ds_);sd('devDate',td_);}}
+// ===================== 可选任务 =====================
 function rdt(){var l=document.getElementById('devTaskList'),t=ld('devTasks',[]);l.innerHTML='';t.forEach(function(e,i){var li=document.createElement('li');li.className=e.done?'done-item':'pending';var ic=document.createElement('span');ic.className='task-icon';ic.textContent=e.done?'✓':'';ic.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};var sp=document.createElement('span');sp.className='task-text';sp.textContent=e.text;sp.onclick=function(){e.done=!e.done;sd('devTasks',t);rdt();};li.appendChild(ic);li.appendChild(sp);if(e.url){var ua=document.createElement('a');ua.className='task-url';ua.href=e.url;ua.target='_blank';ua.rel='noopener noreferrer';ua.textContent='↗';ua.onclick=function(ev){ev.stopPropagation();};li.appendChild(ua);}var lb=document.createElement('button');lb.className='link-set';lb.textContent='🔗';lb.title=e.url?'修改链接':'添加链接';lb.onclick=function(ev){ev.stopPropagation();var u=prompt('链接地址（留空删除）：',e.url||'');if(u===null)return;e.url=u?u:undefined;sd('devTasks',t);rdt();};li.appendChild(lb);var btn=document.createElement('button');btn.className='del-btn';btn.innerHTML='✕';btn.onclick=function(){t.splice(i,1);sd('devTasks',t);rdt();};li.appendChild(btn);l.appendChild(li);});enableDragSort(l,function(){return ld('devTasks',[]);},function(d){sd('devTasks',d);},rdt);}
 function adt(){var i=document.getElementById('devTaskInput'),t=i.value.trim();if(!t)return;var ts=ld('devTasks',[]);ts.push({text:t,done:false});sd('devTasks',ts);rdt();i.value='';i.focus();}
 document.getElementById('devTaskInput').addEventListener('keydown',function(e){if(e.key==='Enter')adt();});rdt();
-
-// ===================== 历史完成查看 =====================
-var histOpen=false;
-function toggleHist(){
-  histOpen=!histOpen;
-  var p=document.getElementById('histPanel'),t=document.getElementById('histToggle');
-  if(!histOpen){p.style.display='none';t.textContent='查看历史完成';return;}
-  t.textContent='收起历史';
-  var mh=ld('taskHistory',{}),dh=ld('devTaskHistory',{}),dates=Object.keys(mh).concat(Object.keys(dh)).filter(function(v,i,a){return a.indexOf(v)===i;}).sort().reverse(),html='';
-  if(!dates.length){p.innerHTML='<div style="color:#c7c7cc;font-size:12px;padding:10px;text-align:center">暂无历史记录</div>';p.style.display='';return;}
-  dates.forEach(function(d){
-    html+='<div style="margin-bottom:6px"><div style="font-size:11px;color:#86868b;margin-bottom:3px;font-weight:500">📅 '+d+'</div>';
-    if(mh[d]){mh[d].forEach(function(i){html+='<div style="display:flex;align-items:center;gap:6px;padding:3px 8px;background:#e6f1fb;border-radius:6px;margin-bottom:2px;font-size:12px"><span style="color:#185fa5;font-size:10px">★</span><span style="flex:1">'+i.text+'</span><span style="color:#c7c7cc;font-size:10px">主线</span></div>';});}
-    if(dh[d]){dh[d].forEach(function(i){html+='<div style="display:flex;align-items:center;gap:6px;padding:3px 8px;background:#e6f1fb;border-radius:6px;margin-bottom:2px;font-size:12px"><span style="color:#34c759;font-size:12px">◆</span><span style="flex:1">'+i.text+'</span><span style="color:#c7c7cc;font-size:10px">可选</span></div>';});}
-    html+='</div>';
-  });
-  p.innerHTML=html;p.style.display='';
-}
 
 // ===================== 日常任务（每日重置 + 层级列表 + 收入） =====================
 function runDailyReset(){
@@ -482,8 +441,6 @@ function runDailyReset(){
   }
 }
 runDailyReset();
-runMainTaskArchive();
-runDevTaskArchive();
 
 var mmData=ld('mindmap',{children:[{label:'电商',done:false,income:0,profit:0,children:[{label:'多多',done:false,income:0,profit:0},{label:'抖店',done:false,income:0,profit:0},{label:'淘宝',done:false,income:0,profit:0}]},{label:'自媒体',done:false,income:0,profit:0,children:[{label:'小红书',done:false,income:0,profit:0},{label:'抖音',done:false,income:0,profit:0},{label:'B站',done:false,income:0,profit:0}]},{label:'个人',done:false,income:0,profit:0,children:[{label:'学习',done:false,income:0,profit:0},{label:'复盘',done:false,income:0,profit:0}]}]});
 
@@ -580,7 +537,7 @@ function showToast(msg,type){
 function syncAll(){
   document.querySelectorAll('.mm-label-input').forEach(function(el){el.blur();});
   try{
-  var ks=['mainTasks','mindmap','mmDate','mtDate','devTasks','devDate','devTaskHistory','taskHistory','mmIncomeHistory','totalProfitAccumulated'];
+  var ks=['mindmap','mmDate','devTasks','mmIncomeHistory','totalProfitAccumulated'];
   var hd={'apikey':'sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Authorization':'Bearer sb_publishable_8sesGXR0bAHLkOgqMD7kUg_qoWT8Haq','Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
   // 先清理云端旧key（已废弃的totalIncomeAccumulated、links等），避免下载时数量对不上
   fetch('https://lmfvfaobkmraiajodede.supabase.co/rest/v1/app_data?id=not.in.('+ks.concat(['password']).join(',')+')',{method:'DELETE',headers:{'apikey':hd['apikey'],'Authorization':hd['Authorization'],'Prefer':'return=minimal'}}).catch(function(){});
