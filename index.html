@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-  <meta name="version" content="1.10">
+  <meta name="version" content="1.10.1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>工作主页</title>
 <style>
@@ -363,8 +363,8 @@ function toggleIncHist(){
   var grandPrf=0;
   dates.forEach(function(d){
     var day=hist[d],dayPrf=0;
-    var dayHtml='';
-    day.forEach(function(cat){
+    var catHtml='';
+    day.forEach(function(cat,ci){
       var catPrf=cat.profit||0;
       dayPrf+=catPrf;
       var childHtml='';
@@ -377,12 +377,13 @@ function toggleIncHist(){
         });
       }
       var catLabel=stripComment(cat.label);
-      dayHtml+='<span style="display:inline-flex;align-items:baseline;gap:4px;min-width:210px;padding:2px 6px"><span style="font-weight:700;color:#1d1d1f;font-size:13px;min-width:55px">'+catLabel+'</span><span style="color:#0066cc;font-size:12px;min-width:50px;text-align:right;font-variant-numeric:tabular-nums">¥'+catPrf.toFixed(0)+'</span>'+(childHtml?'<span style="color:#c7c7cc;font-size:11px;margin:0 3px">{</span>'+childHtml+'<span style="color:#c7c7cc;font-size:11px;margin-left:3px">}</span>':'')+'</span>';
+      if(ci>0){catHtml+='<span style="color:#d2d2d7;margin:0 4px;font-size:18px;line-height:1;align-self:center">|</span>';}
+      catHtml+='<span style="display:inline-flex;align-items:baseline;gap:4px;padding:2px 2px"><span style="font-weight:700;color:#1d1d1f;font-size:13px">'+catLabel+'</span><span style="color:#0066cc;font-size:12px;font-variant-numeric:tabular-nums">¥'+catPrf.toFixed(0)+'</span>'+(childHtml?'<span style="color:#c7c7cc;font-size:11px;margin:0 3px">{</span>'+childHtml+'<span style="color:#c7c7cc;font-size:11px;margin-left:3px">}</span>':'')+'</span>';
     });
     grandPrf+=dayPrf;
-    html+='<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 10px;background:#fafafa;border-radius:6px;margin-bottom:3px;font-size:12px;flex-wrap:wrap"><span style="color:#86868b;font-size:11px;white-space:nowrap;flex:0 0 75px;text-align:right;padding-top:2px">'+d+'</span>'+dayHtml+'</div>';
+    html+='<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 10px;background:#fafafa;border-radius:6px;margin-bottom:3px;font-size:12px;flex-wrap:wrap"><span style="color:#86868b;font-size:11px;white-space:nowrap;flex:0 0 78px;text-align:right;padding-top:2px">'+d+'</span><span style="font-weight:700;color:#0066cc;font-size:13px;white-space:nowrap;padding-top:1px">¥'+dayPrf.toFixed(0)+'</span><span style="color:#d2d2d7;margin:0 6px;font-size:18px;line-height:1;align-self:center">|</span>'+catHtml+'</div>';
   });
-  html+='<div style="display:flex;align-items:center;gap:8px;padding:5px 10px;background:#e6f1fb;border-radius:6px;margin-top:4px;font-size:12px;font-weight:600"><span style="color:#86868b;flex:0 0 75px;text-align:right">合计</span><span style="color:#0066cc">¥ '+grandPrf.toFixed(2)+'</span></div>';
+  html+='<div style="display:flex;align-items:center;gap:8px;padding:5px 10px;background:#e6f1fb;border-radius:6px;margin-top:4px;font-size:12px;font-weight:600"><span style="color:#86868b;flex:0 0 75px;text-align:right">合计</span><span style="color:#0066cc;font-size:14px">¥ '+grandPrf.toFixed(2)+'</span></div>';
   p.innerHTML=html;p.style.display='';
 }
 
